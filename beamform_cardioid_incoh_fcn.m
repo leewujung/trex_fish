@@ -1,16 +1,21 @@
-% 2017 01 18  Clean up code, reference 'beamform_cardioid_incoh'
+% 2016 06 16  Beamform from raw data, linear processing only, not triplet
+% 2016 09 15  
+% 2017 01 06  Change to cardioid beamforming based on beamform_linear_incoh.m
+% 2017 01 14  Clean up code
+%             Take out video plotting parts and stuff related to 'wfm'
 
-clear
+function beamform_cardioid_incoh_fcn(beamform_angle,run_num,base_save_path,base_data_path)
+
 if isunix
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
     addpath(['~/internal_2tb/Dropbox/0_CODE/trex_fish/Triplet_processing_toolbox'])
-    base_save_path = '~/internal_2tb/trex/figs_results/';
-    base_data_path = '~/trex_data/TREX13_Reverberation_Package/TREX_FORA_DATA/';
+    %base_save_path = '~/internal_2tb/trex/figs_results/';
+    %base_data_path = '~/trex_data/TREX13_Reverberation_Package/TREX_FORA_DATA/';
 else
     addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
     addpath('F:\Dropbox\0_CODE\trex_fish\Triplet_processing_toolbox')
-    base_save_path = 'F:\trex\figs_results';
-    base_data_path = '\\10.95.97.212\Data\TREX13_Reverberation_Package\TREX_FORA_DATA/';
+    %base_save_path = 'F:\trex\figs_results';
+    %base_data_path = '\\10.95.97.212\Data\TREX13_Reverberation_Package\TREX_FORA_DATA/';
 end
 
 plot_opt = 0;
@@ -18,7 +23,7 @@ plot_opt = 0;
 %% Setting param and paths to read file
 run_num = 131;
 
-TripInUseDtChn = 3;  %  1-triplet, 3-array
+TripInUseDtChn = 1;  %  1-triplet, 3-array
 TripInUseChn0 = 91;     % start channel NO.
 TripInUseChn1 = 234;    % end channel NO.
 TripInUseChNum = length([TripInUseChn0:TripInUseDtChn:TripInUseChn1]);
@@ -26,11 +31,13 @@ TripInUseChNum = length([TripInUseChn0:TripInUseDtChn:TripInUseChn1]);
 t_start = 0;   % start time within ping
 t_end  =  20;  % end time within ping
 
-%beamform_angle = -87:87;  % defined from broadside
-beamform_angle = 0;
 cw = 1525;  % sound speed
 
 M2     =  [30.0599; -85.6811]; % GPS location of the array
+
+% beamform_angle = [-177:-3 3:177];   % beamform angle in XY plane
+% beamform_angle = 90;
+phi = 90;               % beamform angle in XZ plane
 
 param.run_num = run_num;
 param.TripInUseDtChn = TripInUseDtChn;
@@ -42,7 +49,7 @@ param.t_end = t_end;
 param.cw = cw;
 param.map_coord = M2;
 param.beamform_angle = beamform_angle;
-
+param.phi = phi;
 
 % Get processing heading
 if run_num <= 53     % Fixed heading for different runs
@@ -65,14 +72,15 @@ param.process_heading = process_heading;
 param.gain_sys = gain_sys;
 param.gain_load = gain_load;
 
-
 % Set save folder
 [~,script_name,~] = fileparts(mfilename('fullpath'));
+script_name = script_name(1:end-4);
 save_path = fullfile(base_save_path, ...
                      sprintf('%s_run%03d',script_name,run_num));
 if ~exist(save_path,'dir')
     mkdir(save_path);
 end
+
 
 
 %% Set data path and read ECF
@@ -90,12 +98,13 @@ end
 param.full_data_path = full_data_path;
 
 
+
 %% Data processing loop
 if plot_opt
     fig_polar = figure('position',[150,80,900,700]);
 end
 
-want_file_idx = 150;
+want_file_idx = 150;  % index of file to be processed in the whole folder
 param.want_file_idx = want_file_idx;
 
 for nsig = want_file_idx
@@ -119,7 +128,8 @@ for nsig = want_file_idx
     % Read-in triplet data including acoustic data, heading, roll, time, and frequency
     % Heading_T1,Heading_T2 from heading sensor but not used in processing.
     % Fixed heading is used.
-    [Roll_T1,Roll_T2,Heading_T1,Heading_T2,GLAT,GLON,sample_freq,sample_time_ms,tot_data] = ...
+    [Roll_T1,Roll_T2,Heading_T1,Heading_T2,GLAT,GLON,...
+     sample_freq,sample_time_ms,tot_data] = ...
         func_load_raw_FORA_data(full_data_path, all_datafiles, nsig, t_start, t_end,...
                                 TripInUseChn0,TripInUseDtChn,TripInUseChn1);
     Nt = length(sample_time_ms);
@@ -132,7 +142,7 @@ for nsig = want_file_idx
     data.GLAT = GLAT;
     data.GLON = GLON;
     data.sample_freq = sample_freq;
-
+   
     % Use info from the ECF file to recontruct, bandwidth, center freq,
     % pulse length, and tapering.
     [F1, F2, PL, Taper] = func_extract_signal_info(nsig, allsignal_info);
@@ -157,7 +167,8 @@ for nsig = want_file_idx
     drive_voltage_source = gen_theoretical_waveform(sample_freq, F1, F2, PL, Taper);
     drive_voltage_source_conjfft = conj(fft(drive_voltage_source, size(tot_data,2)));
     drive_voltage_source_conjfft = drive_voltage_source_conjfft/...
-        max( abs(drive_voltage_source_conjfft) ); % filter function with normalization applied!
+        max( abs(drive_voltage_source_conjfft) ); % filter function with 
+                                                  % normalization applied!
 
     tx_sig.drive_voltage_source = drive_voltage_source;
     tx_sig.drive_voltage_source_conjfft = drive_voltage_source_conjfft;
@@ -168,19 +179,21 @@ for nsig = want_file_idx
     for nch = 1:TripInUseChNum
         select_data = squeeze(tot_data(nch, :));
         filtered_data(nch,:) = ...
-            Gaussian_PCM_fil(select_data,t,center_freq,full_bandwidth,drive_voltage_source_conjfft);
+            Gaussian_PCM_fil(select_data,t,center_freq,...
+                             full_bandwidth,drive_voltage_source_conjfft);
     end
-    data.filtered_data = filtered_data;
     clear select_data;
 
 
     % Beamform pulse compressed data
-    dt = t(2)-t(1);  % 1/fs
-
+    dt = t(2)-t(1);         %1/fs
+ 
     % Get array shape parameter with Newfora_spv_trip
     % provided by original author and changed by us for channel selection.
     [Y_a,X_a,Z_a] = Newfora_spv_trip(Roll_T2,Roll_T2,...
-                    TripInUseChn0,TripInUseChn1,TripInUseDtChn);
+                                     TripInUseChn0,TripInUseChn1,TripInUseDtChn);
+    Y_a = -1*Y_a;  % NOTE: this change angle definition orientation
+                   % this line is from Jie's original code
     array_coord = [X_a',Y_a',Z_a'];
     param.array_coord = array_coord;    
 
@@ -196,26 +209,24 @@ for nsig = want_file_idx
     param.step_size = step_size;
     data.t_win = t_win;  % save this to 'data' to go with r_win
 
-
     %  Beamforming with moving Gaussian window, stepsize tau = 1/bandwidth
     for nwin = 1:N_win
         for nch = 1:TripInUseChNum
-            select_data(nch,:) = reshape( filtered_data(nch,(nwin-1)*step_size+[1:Npts]),...
-                                          1,Npts ).*Gaus_window; % Gaussian window
+            select_data(nch,:) = ...
+                reshape( filtered_data(nch,(nwin-1)*step_size+[1:Npts]),...
+                         1,Npts ).*Gaus_window; % Gaussian window
         end
-        f0 = max(center_freq-full_bandwidth/2,1);
-        f1 = min(center_freq+full_bandwidth/2,1/dt*0.5);
-        tmp = linear_beamformer(select_data,X_a,Y_a,Z_a,beamform_angle, ...
-                                dt,cw,f0,f1);
-        beamform(nwin,:) = sum(abs(tmp).^2,2);  % sum across frequency
+        beamform(nwin,:) = 2*sum(abs(...
+            Cardioid_beamformer_foraTrip_INFreq_Domain(select_data,X_a,Y_a,Z_a,...
+            phi,beamform_angle,dt,cw,max(center_freq-full_bandwidth/2,1),...
+            min(center_freq+full_bandwidth/2,1/dt*0.5))).^2,2);  % sum across frequency
     end
-
     data.beamform_nocal = beamform;
-        
+
     % normalization
-    normalization_factor = (Npts*dt/tau);  % Npt=length of Gaussian window
-                                           % dt=1/fs, tau=1/full_bandwidth
-    beamform = 10*log10( beamform * normalization_factor) + 42.35-GainSet;
+    normalization_factor = (Npts*dt/tau)*10;  % Npt=length of Gaussian window
+                                              % dt=1/fs, tau=1/full_bandwidth
+    beamform = 10*log10( beamform * normalization_factor) + gain_load-gain_sys;
 
     data.beamform = beamform;
 
@@ -229,42 +240,38 @@ for nsig = want_file_idx
         r_win = (t_win-1)*cw/2;  % range adjusted to 1 sec after transmission
     end
 
-    data.idx_t_win_to_cut = idx_t_win_to_cut;
+    data.cut_idx = idx_t_win_to_cut;
     data.range_beam = r_win;
 
-    % Get polar angle for plotting
-    polar_angle = -process_heading+beamform_angle+mag_decl;
-    [aa,rr] = meshgrid(polar_angle/180*pi,r_win_adj/1000);
-    [X,Y] = pol2cart(aa,rr);
+    % Angle routines modifided from Jie's code
+    AngleOfArray = 180 - process_heading;
+    Y = r_win'*cos((beamform_angle-AngleOfArray)*pi/180);
+    X = r_win'*sin((beamform_angle-AngleOfArray)*pi/180);
 
-    % Mirror the polar angle since there's left-right ambiguity
-    polar_angle_mir = -process_heading+180-beamform_angle+mag_decl;
-    [aa_mir,rr_mir] = meshgrid(polar_angle_mir/180*pi,r_win_adj/1000);
-    [X_mir,Y_mir] = pol2cart(aa_mir,rr_mir);
-
-
-    % figure title
-    data.polar_angle = polar_angle;
-    data.polar_angle_mir = polar_angle_mir;
     data.X = X;
     data.Y = Y;
-    data.X_mir = X_mir;
-    data.Y_mir = Y_mir;
+    data.AngleOfArray = AngleOfArray;
 
+    % Save results
+    data = orderfields(data);
+    param = orderfields(param);
+    tx_sig = orderfields(tx_sig);
+        
     save_fname = sprintf('%s_run%03d_ping%04d',script_name,run_num,nsig);  % data
     save(fullfile(save_path,[save_fname,'.mat']),'param','tx_sig','data');
 
+
     % Polar energy plot for this ping
     if plot_opt
-        r_win_adj = r_win(idx_t_win_to_cut:end);
+        %r_win_adj = r_win(idx_t_win_to_cut:end);
         beamform_adj = beamform(idx_t_win_to_cut:end,:);
         
         beamform_adj_detrend = beamform_adj +...  % detrend, ad-hoc 
-            repmat(30*log10(r_win_adj'),1,size(beamform_adj,2));
-        
+            repmat(30*log10(r_win'),1,size(beamform_adj,2));
+
         % load in bathymetry map and clutter objects
         [Map_X,Map_Y,Map_Z,wrecgps] = func_load_map_targets(M2);
-
+        
         cla
         h1 = pcolor(X,Y,beamform_adj_detrend);  % plot echoes
         set(h1,'edgecolor','none')
@@ -280,13 +287,14 @@ for nsig = want_file_idx
         xlabel('Distance (km)');
         ylabel('Distance (km)');
         axis([-11 11 -11 11])
-        title(file_name)
+        title(sprintf('Ping %04d, local time %02d:%02d:%02d',...
+            nsig,time_hh_local,time_mm_local,time_ss_local));
         hold off
         
         saveSameSize_100(gcf,'file',fullfile(save_path,save_fname),...
             'format','png');
         %saveas(gcf,fullfile(save_path,[save_fname,'.fig']),'fig');
     end
-
+    
 end  % loop through all pings
 

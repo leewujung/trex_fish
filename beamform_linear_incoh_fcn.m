@@ -1,16 +1,17 @@
 % 2017 01 18  Clean up code, reference 'beamform_cardioid_incoh'
 
-clear
+function beamform_linear_incoh_fcn(beamform_angle,run_num,base_save_path,base_data_path)
+
 if isunix
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
     addpath(['~/internal_2tb/Dropbox/0_CODE/trex_fish/Triplet_processing_toolbox'])
-    base_save_path = '~/internal_2tb/trex/figs_results/';
-    base_data_path = '~/trex_data/TREX13_Reverberation_Package/TREX_FORA_DATA/';
+    %base_save_path = '~/internal_2tb/trex/figs_results/';
+    %base_data_path = '~/trex_data/TREX13_Reverberation_Package/TREX_FORA_DATA/';
 else
     addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
     addpath('F:\Dropbox\0_CODE\trex_fish\Triplet_processing_toolbox')
-    base_save_path = 'F:\trex\figs_results';
-    base_data_path = '\\10.95.97.212\Data\TREX13_Reverberation_Package\TREX_FORA_DATA/';
+    %base_save_path = 'F:\trex\figs_results';
+    %base_data_path = '\\10.95.97.212\Data\TREX13_Reverberation_Package\TREX_FORA_DATA/';
 end
 
 plot_opt = 0;
@@ -27,7 +28,7 @@ t_start = 0;   % start time within ping
 t_end  =  20;  % end time within ping
 
 %beamform_angle = -87:87;  % defined from broadside
-beamform_angle = 0;
+%beamform_angle = 0;
 cw = 1525;  % sound speed
 
 M2     =  [30.0599; -85.6811]; % GPS location of the array
@@ -68,6 +69,7 @@ param.gain_load = gain_load;
 
 % Set save folder
 [~,script_name,~] = fileparts(mfilename('fullpath'));
+script_name = script_name(1:end-4);
 save_path = fullfile(base_save_path, ...
                      sprintf('%s_run%03d',script_name,run_num));
 if ~exist(save_path,'dir')
@@ -215,7 +217,7 @@ for nsig = want_file_idx
     % normalization
     normalization_factor = (Npts*dt/tau);  % Npt=length of Gaussian window
                                            % dt=1/fs, tau=1/full_bandwidth
-    beamform = 10*log10( beamform * normalization_factor) + 42.35-GainSet;
+    beamform = 10*log10( beamform * normalization_factor) + gain_load-gain_sys;
 
     data.beamform = beamform;
 
@@ -228,17 +230,18 @@ for nsig = want_file_idx
         idx_t_win_to_cut = find(t_win>1,1,'first');
         r_win = (t_win-1)*cw/2;  % range adjusted to 1 sec after transmission
     end
+    r_win_adj = r_win(idx_t_win_to_cut:end);
 
     data.idx_t_win_to_cut = idx_t_win_to_cut;
     data.range_beam = r_win;
 
     % Get polar angle for plotting
-    polar_angle = -process_heading+beamform_angle+mag_decl;
+    polar_angle = -process_heading+beamform_angle;
     [aa,rr] = meshgrid(polar_angle/180*pi,r_win_adj/1000);
     [X,Y] = pol2cart(aa,rr);
 
     % Mirror the polar angle since there's left-right ambiguity
-    polar_angle_mir = -process_heading+180-beamform_angle+mag_decl;
+    polar_angle_mir = -process_heading+180-beamform_angle;
     [aa_mir,rr_mir] = meshgrid(polar_angle_mir/180*pi,r_win_adj/1000);
     [X_mir,Y_mir] = pol2cart(aa_mir,rr_mir);
 
@@ -256,7 +259,6 @@ for nsig = want_file_idx
 
     % Polar energy plot for this ping
     if plot_opt
-        r_win_adj = r_win(idx_t_win_to_cut:end);
         beamform_adj = beamform(idx_t_win_to_cut:end,:);
         
         beamform_adj_detrend = beamform_adj +...  % detrend, ad-hoc 

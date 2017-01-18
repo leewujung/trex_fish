@@ -225,7 +225,7 @@ for nsig = want_file_idx
     % normalization
     normalization_factor = (Npts*dt/tau)*10;  % Npt=length of Gaussian window
                                               % dt=1/fs, tau=1/full_bandwidth
-    beamform = 10*log10( beamform * normalization_factor) + 46.95-GainSet;
+    beamform = 10*log10( beamform * normalization_factor) + gain_load-gain_sys;
 
     data.beamform = beamform;
 
