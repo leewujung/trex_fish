@@ -1,17 +1,12 @@
 % 2017 01 18  Clean up code, reference 'beamform_cardioid_incoh'
 
-function beamform_linear_incoh_fcn(beamform_angle,run_num,base_save_path,base_data_path)
+function beamform_linear_incoh_fcn(beamform_angle,run_num,ping_num,base_save_path,base_data_path)
 
+addpath(['./Triplet_processing_toolbox'])
 if isunix
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
-    addpath(['~/internal_2tb/Dropbox/0_CODE/trex_fish/Triplet_processing_toolbox'])
-    %base_save_path = '~/internal_2tb/trex/figs_results/';
-    %base_data_path = '~/trex_data/TREX13_Reverberation_Package/TREX_FORA_DATA/';
 else
     addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
-    addpath('F:\Dropbox\0_CODE\trex_fish\Triplet_processing_toolbox')
-    %base_save_path = 'F:\trex\figs_results';
-    %base_data_path = '\\10.95.97.212\Data\TREX13_Reverberation_Package\TREX_FORA_DATA/';
 end
 
 plot_opt = 0;
@@ -97,7 +92,7 @@ if plot_opt
     fig_polar = figure('position',[150,80,900,700]);
 end
 
-want_file_idx = 150;
+want_file_idx = ping_num;
 param.want_file_idx = want_file_idx;
 
 for nsig = want_file_idx
