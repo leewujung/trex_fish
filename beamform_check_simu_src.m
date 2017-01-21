@@ -1,13 +1,23 @@
 % 2017 01 18  Produce simulated data to check beamforming results
 
-bf = 0;
+if ismac
+    base_data_path = '~/Downloads';
+else
+    base_data_path = '~/internal_2tb/trex/figs_results/';
+end
+
+p = mfilename('fullpath');
+pp=fileparts(p);
+addpath(fullfile(pp,'Triplet_processing_toolbox'));
+
+bf=0;
 if bf==0
-    base_data_path = ['~/internal_2tb/trex/figs_results/' ...
-                      'beamform_linear_coherent_run131'];
+    base_data_path = fullfile(base_data_path,...
+                      'beamform_linear_coherent_run131');
     data_file = 'beamform_linear_coherent_run131_ping0150.mat';
 else
-    base_data_path = ['~/internal_2tb/trex/figs_results/' ...
-                      'beamform_cardioid_coherent_run131'];
+    base_data_path = fullfile(base_data_path,...
+                      'beamform_linear_coherent_run131');
     data_file = 'beamform_cardioid_coherent_run131_ping0150.mat';
 end
 load(fullfile(base_data_path,data_file));
@@ -113,7 +123,13 @@ seg_fft_beam_mf_pad = [seg_fft_beam_mf;...
 beam_mf_in_time = ifft(seg_fft_beam_mf_pad);
 mf_len = size(beam_mf_in_time,1);
 
-%data.beam_mf_in_time = beam_mf_in_time;
+sig_fft = fft(sig);
+sig_fft = sig_fft(1:seg_len_half,:);
+sig_fft_mf = sig_fft.*repmat(tmp.',1,size(sig_fft,2));
+sig_fft_mf_pad = [sig_fft_mf;...
+                    flipud(conj(sig_fft_mf(2:end,:)))];
+sig_mf_in_time = ifft(sig_fft_mf_pad);
+
 
 % Gain factors for beamforming and pulse compression
 tmp_freq = (0:seg_len_half-1)*df;
