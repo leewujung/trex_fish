@@ -10,7 +10,8 @@
 
 function beamform_cardioid_coherent_fcn(beamform_angle,run_num,ping_num,base_save_path,base_data_path)
 
-addpath(['./Triplet_processing_toolbox'])
+[path_name,script_name,~] = fileparts(mfilename('fullpath'));
+addpath(fullfile(path_name,'Triplet_processing_toolbox'))
 if isunix
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
 else
@@ -72,14 +73,12 @@ param.gain_load = gain_load;
 
 
 % Set save folder
-[~,script_name,~] = fileparts(mfilename('fullpath'));
 script_name = script_name(1:end-4);
 save_path = fullfile(base_save_path, ...
     sprintf('%s_run%03d',script_name,run_num));
 if ~exist(save_path,'dir')
     mkdir(save_path);
 end
-
 
 %% Set data path and read ECF
 full_data_path = fullfile(base_data_path,sprintf('r%d',run_num));
