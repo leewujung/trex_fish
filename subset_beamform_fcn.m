@@ -3,11 +3,13 @@
 % 2017 01 23  Clean up code to work with new beamforming output
 
 
-function subset_beamform_fcn(data_path,base_save_path,base_data_path)
+function subset_beamform_fcn(data_path,ping_num,base_save_path,base_data_path)
 % Extract and save a subset of beamformed data for faster access
 % 
 % INPUT
 %   data_path        path to the folder containing beamformed files
+%   ping_num         ping number to be extracted,
+%                    or [] for all files in the folder
 %   base_data_path   path to the base results folder
 %   base_save_path   path to the base folder where extracted results are saved
 %
@@ -29,7 +31,12 @@ if ~exist(save_path,'dir')
 end
 
 % Ping range
-data_files = dir(fullfile(base_data_path,data_path,'*.mat'));
+if isempty(ping_num)
+    data_files = dir(fullfile(base_data_path,data_path,'*.mat'));
+    ping_len = length(data_files);
+else
+    ping_len = length(ping_num);
+end
 
 % Set extraction area
 cut_x = [-1 -6];
@@ -42,15 +49,21 @@ B.extract_param.range_lim = all_rr;
 B.extract_param.angle_lim = all_aa;
 
 % Loop through all files
-for iP=1:length(data_files)
-    
-    fname = data_files(iP).name;
+for iP=1:ping_len
+
+    if isempty(ping_num)  % if processing all files in the folder
+        fname = data_files(iP).name;
+        scat_ping = str2double(fname(end-7:end-4));
+    else
+        fname = sprintf('beamform_%s_%s_run%03d_ping%04d.mat',...
+                        bf_type,coh_type,run_num,ping_num(iP));
+        scat_ping = ping_num(iP);
+    end
     disp(['Processing ',fname]);
     A = load(fullfile(base_data_path,data_path,fname));
 
-    scat_ping = str2double(fname(end-7:end-4));
-    save_fname = sprintf('%s_%s_%s_run%03d_p%04d',...
-        script_name,bf_type,coh_type,run_num,scat_ping);
+    save_fname = sprintf('%s_%s_%s_run%03d_ping%04d',...
+                         script_name,bf_type,coh_type,run_num,scat_ping);
     
     B.param = A.param;  % copy all parameters
     B.extract_param.ori_filename = fname;
