@@ -68,6 +68,7 @@ for iP=1:ping_len
     B.param = A.param;  % copy all parameters
     B.extract_param.ori_filename = fname;
     
+
     % Get index range of angle and range
     [~,angle_idx(1)] = min(abs(A.data.polar_angle-all_aa(1)/pi*180));
     [~,angle_idx(2)] = min(abs(A.data.polar_angle-all_aa(2)/pi*180));
@@ -89,6 +90,33 @@ for iP=1:ping_len
     B.extract_param = orderfields(B.extract_param);
     
     B.tx_sig = A.tx_sig;
+
+    % Plot to check
+    if 0
+        env = nan(size(A.data.beam_mf_in_time));
+        env_sm = nan(size(env));
+        for iA=1:size(env,2)
+            env(:,iA) = abs(hilbert(A.data.beam_mf_in_time(:,iA)));
+            env_sm(:,iA) = smooth(env(:,iA),sm_len);
+        end
+        env_sm = env_sm(1:sm_len:end,:);
+
+        A.data.range_beam_sm = A.data.range_beam(1:sm_len:end);
+        [amesh,rmesh] = meshgrid(A.data.polar_angle,A.data.range_beam_sm);
+        [X,Y] = pol2cart(amesh/180*pi,rmesh);
+
+        Benv = nan(size(B.data.beam_mf_in_time));
+        Benv_sm = nan(size(Benv));
+        for iA=1:size(Benv,2)
+            Benv(:,iA) = abs(hilbert(B.data.beam_mf_in_time(:,iA)));
+            Benv_sm(:,iA) = smooth(Benv(:,iA),sm_len);
+        end
+        Benv_sm = Benv_sm(1:sm_len:end,:);
+
+        B.data.range_beam_sm = B.data.range_beam(1:sm_len:end);
+        [Bamesh,Brmesh] = meshgrid(B.data.polar_angle,B.data.range_beam_sm);
+        [BX,BY] = pol2cart(Bamesh/180*pi,Brmesh);
+    end
 
     % Save data
     save(fullfile(save_path,[save_fname,'.mat']),'-struct','B');
