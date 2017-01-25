@@ -12,8 +12,6 @@ else
     amp_mon_path = 'F:\trex\Data\Amp_mon_data';
 end
 
-keyboard
-
 switch run_num
     case 79
         amp_mon_subpath = 'TREX13_MON_13-05-09_21-27-05-925';
