@@ -1,14 +1,13 @@
-function spec = get_spectrum_mtm(sig,fs,win_perc,SL)
+function spec = get_spectrum_mtm(sig,fs,win_perc)
 % Get spectrum using multitape method and compensate for source level
+% 
 % INPUT
 %   sig        input signal
 %   fs         sampling frequency [Hz]
 %   win_perc   percentage of the window function wrt signal length
-%   SL         source level obtained using get_SL.m
 % 
 % Wu-Jung Lee | leewujung@gmail.com
 % 2017 01 25  revise
-
 
 fft_len = size(sig,1);
 win_len = round(fft_len*win_perc);
@@ -30,15 +29,9 @@ end
 
 % ------ Use MULTITAPER method to estimate spectrum --------
 [pxx,f] = pmtm(sig.*repmat(win,1,size(sig,2)),[],[],fs);
-pxx_mean = mean(abs(pxx),2);
-pxx_dB = 10*log10(pxx);
-pxx_dB_mean = 10*log10(pxx_mean);
-
-% Compensate for SL
-SL_psd_comp = interp1(SL.freq,SL.SL_psd,f);
-pxx_dB_mean_SL_comp = pxx_dB_mean-SL_psd_comp;
+pxx_mean = mean(pxx,2);
 
 spec.freq_vec = f;
 spec.pxx = pxx;
 spec.pxx_mean = pxx_mean;
-spec.pxx_dB_mean_SL_comp = pxx_dB_mean_SL_comp;
+
