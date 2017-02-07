@@ -7,7 +7,9 @@ function spec = get_spectrum_mtm(sig,fs,win_perc)
 %   win_perc   percentage of the window function wrt signal length
 % 
 % Wu-Jung Lee | leewujung@gmail.com
-% 2017 01 25  revise
+% 2017 01 25  revised from old code
+
+keyboard
 
 fft_len = size(sig,1);
 win_len = round(fft_len*win_perc);

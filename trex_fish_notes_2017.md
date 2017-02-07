@@ -27,7 +27,7 @@ Updated code `get_SL`:
 * Note Jie uses **rms** values for calculating the source level, but I have to use the actual spectral level for potential resonance fitting using fish scattering models. In `get_SL`, the rms value is `tx_rms_dB`, which can be recovered by calculating `10*log10(sum(10.^(tx_psd_dB/10))*df)` (integrating over all spectrum).
 * In the output of `get_SL`, `SL=SL_psd/fs`where `fs` is the sampling frequency, i.e., `SL_psd` is the spectral level.
 
-![](../Documents/Jie_cal_notes.png){ width=50%}
+	![](../Documents/Jie_cal_notes_sub.jpg){ width=70%}
 
 
 ##############################################
@@ -53,23 +53,23 @@ Updated code `get_SL`:
 
 	[10*log10(sum(abs(sig).^2,1)/fs)' 10*log10(sum(10.^(sig_psd_dB/10),1))']
 	ans =
-	114.8502  114.1857
-	114.8294  114.2552
-	114.8350  114.3434
-	114.8213  114.3801
-	114.8028  114.3735
-	114.8042  114.3664
-	114.8066  114.3675
-	114.7633  114.3386
-	114.6655  114.2501
-	114.5701  114.1252
-	114.5396  114.0099
+		114.8502  114.1857
+		114.8294  114.2552
+		114.8350  114.3434
+		114.8213  114.3801
+		114.8028  114.3735
+		114.8042  114.3664
+		114.8066  114.3675
+		114.7633  114.3386
+		114.6655  114.2501
+		114.5701  114.1252
+		114.5396  114.0099
 
-	 [10*log10(sum(10.^(sig_psd_dB(idx_sig,1)/10))*mean(diff(sig_freq_vec)));...
+	[10*log10(sum(10.^(sig_psd_dB(idx_sig,1)/10))*mean(diff(sig_freq_vec)));...
 	10*log10(sum(pxx(idx_pxx,1))*mean(diff(f)))]
 	ans =
-	117.9556
-	118.2376
+		117.9556
+		118.2376
 	```
 
 
