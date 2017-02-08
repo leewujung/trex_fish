@@ -72,5 +72,14 @@ Updated code `get_SL`:
 		118.2376
 	```
 
+##############################################
+## 2017/02/01-08
+* Started re-writing the manuscript
+* Updating split-window and energy normalizer code to work with new data format:
+	* `normalizer_split_window`
+	* `normalizer_energy`
+* For reasons currently unknown, the energy normalizer has "rings" of elevated levels throughout range, corresponding to the locations of nulls in the non-pulse compressed but beamformed time series. **LOOK INTO THIS WHEN HAVE TIME!**
+* The energy normalizer also requires using all data instead of just the subset. This makes processing a lot slower... for now only use the split-window normalizer for the paper.
+
 
 
