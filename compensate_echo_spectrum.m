@@ -1,4 +1,4 @@
-function ospec = compensate_echo_spectrum(spec,SL,A)
+function spec = compensate_echo_spectrum(spec,SL,A)
 % Compensate for gains contributed by load, system gain, beamforming, pulse
 % compression, and SL
 %

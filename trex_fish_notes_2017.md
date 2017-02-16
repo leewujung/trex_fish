@@ -81,5 +81,16 @@ Updated code `get_SL`:
 * For reasons currently unknown, the energy normalizer has "rings" of elevated levels throughout range, corresponding to the locations of nulls in the non-pulse compressed but beamformed time series. **LOOK INTO THIS WHEN HAVE TIME!**
 * The energy normalizer also requires using all data instead of just the subset. This makes processing a lot slower... for now only use the split-window normalizer for the paper.
 
+##############################################
+## 2017/02/15
+* Functions to plot echogram:
+	* `plot_small_echogram`: can be called to plot small scale echogram on a given axes handle
+	* `plot_large_echogram`: not a function, can be used to plot full scale echogram
+* Try `echo_info` on multiple overnight sessions
+	* run 103: ping 155 and 160 seem stronger than other pings by a few dB??
+	* run 79: fish spread toward southern side of the shipwreck
+* Remember that run 94 pings after 573 have not been beamformed
+* Remember to change the part re. ping_num swicth in `get_SL`
+
 
 

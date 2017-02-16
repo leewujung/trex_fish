@@ -24,7 +24,7 @@ else
 end
 
 % Set up various paths
-data_path = 'subset_beamform_cardioid_coherent_run131';
+data_path = 'subset_beamform_cardioid_coherent_run124';
 ss = strsplit(data_path,'_');
 run_num = str2double(ss{end}(4:end));
 
@@ -34,8 +34,18 @@ if ~exist(save_path,'dir')
     mkdir(save_path);
 end
 
-% Set view area
-axis_xy = [-5 -1 -5 -1];
+% Ping range
+ping_all = 522:20:962;
+plot_opt = 1;
+
+% Set params
+cmap = 'jet';
+sm_len = 100;
+npt = 50;
+win_perc = 0.2;  % proportion of total signal length to form a window for
+                 % spectral estimation
+axis_lim = [-5 -1 -5 -1];
+color_axis = [180 210];
 
 % Area not including wreck
 no_rr = [3.60,3.92];
@@ -43,20 +53,10 @@ no_aa = [-2.45,-2.27];
 
 % Wreck only
 wr_rr = [3.92,4.12];  % USS Strength
-wr_aa = [-2.38,-2.21];
+wr_aa = [-2.40,-2.21];
 %wr_rr = [4.16,4.38];  % Bridge span
 %wr_aa = [-2.53,-2.36];
 
-% Ping range
-ping_all = 1:2;
-plot_opt = 1;
-
-% Params for plotting
-cmap = 'jet';
-sm_len = 100;
-npt = 50;
-win_perc = 0.2;  % proportion of total signal length to form a window for
-                 % spectral estimation
 
 % Rayleigh distr
 x_rayl = logspace(-3,log10(2000),500);  % standard
@@ -88,7 +88,7 @@ for iP=1:length(ping_all)
     % Get echo envelope and smoothed envelope
     % Note it's better to do this before cutting out specific piece to avoid
     % matched filter artifact at the beginning and end of the time series
-    [mf_env,plot_param] = get_mf_env_xy(A,sm_len);
+    [mf_env,~] = get_mf_env_xy(A,sm_len);
 
     % Extract matched filter output
     no = A.data.beam_mf_in_time(no_r_idx(1):no_r_idx(2),...
@@ -126,38 +126,31 @@ for iP=1:length(ping_all)
     wr_bf_env_max = max(wr_env(:));
     
     % Store extracted info
+    S.no = no;
+    S.wr = wr;
     S.spec_no = no_spec;
     S.spec_wr = wr_spec;
     S.env_no = no_env;
     S.env_wr = wr_env;
     S.stat_no = no_stat;
     S.stat_wr = wr_stat;
-   
+
     % Save file
-    save(fullfile(save_path,[save_fname,'_info.mat']),'-struct','S');
-    
+    save(fullfile(save_path,[save_fname,'.mat']),'-struct','S');
     
     %------- PLOT ------------
     if plot_opt
-    title_text = sprintf('Run %d, Ping %d, %s',run_num,ping_num,A.time_str_scat);
-    
-    subplot(131)  % echogram
-    cla
-    h1 = pcolor(plot_param.X_sm/1e3,plot_param.Y_sm/1e3,...
-                20*log10(mf_env.env_sm)+A.param.gain_load-A.param.gain_sys-...
-                A.param.gain_beamform-A.param.gain_pc);
-    set(h1,'edgecolor','none');
+    title_text = sprintf('Run %d, Ping %d, %02d:%02d:%02d',...
+                         run_num,ping_num,A.data.time_hh_local,...
+                         A.data.time_mm_local,A.data.time_ss_local);
+
+    % echogram
+    h = plot_small_echogram(subplot(131),A,sm_len,color_axis,axis_lim);
     hold on
-    plot(no_pie_x/1e3,no_pie_y/1e3,'r','linewidth',2);
-    plot(wr_pie_x/1e3,wr_pie_y/1e3,'r','linewidth',2);
-    axis equal
-    axis([-4.5 -1.5 -4.5 -1.5])
-    title(sprintf('Run %d, Ping %d, %s',run_num,ping_num,A.time_str_scat));
-    caxis([80 110])
-    colormap(cmap);
-    xlabel('Distance (km)'); ylabel('Distance (km)');
-    colorbar('location','southoutside')
-    
+    plot(no_pie_x/1e3,no_pie_y/1e3,'m','linewidth',2);
+    plot(wr_pie_x/1e3,wr_pie_y/1e3,'m','linewidth',2);
+    hold off
+
     subplot(132)  % stat
     cla
     hr = loglog(x_rayl,rayl,'k');
@@ -166,27 +159,31 @@ for iP=1:length(ping_all)
     hwr_scat_kde = loglog(wr_stat.x_kde,wr_stat.px_kde,'color',[153,204,255]/255,'linewidth',2);
     ll = legend('no wreck','wreck');
     set(ll,'fontsize',11,'location','southoutside')
-    axis([5e3 1e8 1e-10 3e-6])
-    xlabel('Echo magnitude')
-    ylabel('PDF')
+    axis([5e3 5e8 1e-10 3e-6])
+    xlabel('Echo magnitude','fontsize',14)
+    ylabel('PDF','fontsize',14)
+    set(gca,'fontsize',12,'xtick',[1e4,1e6,1e8])
     hold off
     grid
     
     subplot(133)  % spectrum
     cla
-    plot(no_spec.freq_vec,no_spec.pxx_dB_mean_comp,...
+    plot(no_spec.freq_vec/1e3,no_spec.pxx_dB_mean_comp,...
         'color',corder(1,:),'linewidth',2);
     hold on
-    plot(wr_spec.freq_vec,wr_spec.pxx_dB_mean_comp,...
+    plot(wr_spec.freq_vec/1e3,wr_spec.pxx_dB_mean_comp,...
         'linewidth',2,'color',[153,204,255]/255);
     ll = legend('no wreck','wreck');
     set(ll,'fontsize',11,'location','southoutside')
     ylim([-140 -100])
-    xlim([1.5e3 3.8e3])
-    xlabel('Frequency (Hz)')
-    ylabel('Spectral density (dB/Hz)') 
+    xlim([1.6 3.8])
+    xlabel('Frequency (kHz)','fontsize',14)
+    ylabel('Spectral density (dB/Hz)','fontsize',14)
+    set(gca,'fontsize',12,'xtick',1.6:0.4:3.8,'ytick',-140:10:-100)
     grid on
     box on
+
+    mtit(title_text,'fontsize',16);
     
     saveSameSize_100(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
         'format','png');

@@ -2,7 +2,7 @@
 
 addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
 
-data_path = 'beamform_cardioid_coherent_run131';
+data_path = 'beamform_cardioid_coherent_run087';
 base_data_path = '/media/wu-jung/wjlee_apl_1/trex_results/';
 base_save_path = '/home/wu-jung/internal_2tb/trex/figs_results';
 
@@ -21,7 +21,7 @@ if ~exist(save_path,'dir')
 end
 
 % Set params
-ping_num = 22;
+ping_num = 1;
 sm_len = 100;
 
 % Plotting
@@ -88,6 +88,9 @@ ylabel('Distance (km)','fontsize',14)
 gray = [1 1 1]*130/255;
 [c,hmap]=contour(Map_X/1000,Map_Y/1000,Map_Z,[0:-4:-30],'color',gray);
 clabel(c,hmap,'fontsize',8,'linewidth',0.5,'Color',gray);
+
+title(sprintf('Ping %04d, %02d:%02d:%02d',scat_ping,...
+              A.data.time_hh_local,A.data.time_mm_local,A.data.time_ss_local))
 
 % Save plot
 saveSameSize_300(gcf,'file',fullfile(save_path,[save_fname,'.png']),...

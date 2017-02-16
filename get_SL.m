@@ -13,20 +13,32 @@ else
 end
 
 switch run_num
-    case 79
-        amp_mon_subpath = 'TREX13_MON_13-05-09_21-27-05-925';
-        amp_mon_file = 'TREX13_MON_I00079_P00004.mat';
-    case 87
-        amp_mon_subpath = 'TREX13_MON_13-05-10_17-54-44-701';
-        amp_mon_file = 'TREX13_MON_I00087_P00010.mat';
-    case 131
-        amp_mon_subpath = 'TREX13_MON_13-05-16_18-28-07-368';
-        switch wfm_num
-            case 1
-                amp_mon_file = 'TREX13_MON_I00131_P00009.mat';
-            case 2
-                amp_mon_file = 'TREX13_MON_I00131_P00010.mat';
-        end
+  case 79
+    amp_mon_subpath = 'TREX13_MON_13-05-09_21-27-05-925';
+    amp_mon_file = 'TREX13_MON_I00079_P00004.mat';
+  case 87
+    amp_mon_subpath = 'TREX13_MON_13-05-10_17-54-44-701';
+    amp_mon_file = 'TREX13_MON_I00087_P00010.mat';
+  case 94
+    amp_mon_subpath = 'TREX13_MON_13-05-11_20-09-48-855';
+    amp_mon_file = 'TREX13_MON_I00094_P00003.mat';
+  case 103
+    amp_mon_subpath = 'TREX13_MON_13-05-12_19-07-57-592';
+    amp_mon_file = 'TREX13_MON_I00103_P00005.mat';
+  case 115
+    amp_mon_subpath = 'TREX13_MON_13-05-13_20-40-15-101';
+    amp_mon_file = 'TREX13_MON_I00115_P00010.mat';
+  case 124
+    amp_mon_subpath = 'TREX13_MON_13-05-15_21-11-39-716';
+    amp_mon_file = 'TREX13_MON_I00124_P00010.mat';
+  case 131
+    amp_mon_subpath = 'TREX13_MON_13-05-16_18-28-07-368';
+    switch wfm_num
+      case 1
+        amp_mon_file = 'TREX13_MON_I00131_P00009.mat';
+      case 2
+        amp_mon_file = 'TREX13_MON_I00131_P00010.mat';
+    end
 end
 A = load(fullfile(amp_mon_path,amp_mon_subpath,amp_mon_file));
 
