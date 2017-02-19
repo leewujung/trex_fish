@@ -8,35 +8,48 @@
 %             use SL to calibrate the spectrum
 %             save info extracted for each ping
 % 2017 01 25  Clean up code to work with new beamforming results
+% 2016 02 19  Make into a function
 
-clear
+function echo_info_fcn(data_path,ping_num,base_save_path,base_data_path,plot_show_opt)
+% Extract echo level, spectrum, and statistics info from subset beamformed results
+% 
+% INPUT
+%   data_path        path to the folder containing beamformed files
+%   ping_num         ping number to be extracted,
+%                    or [] for all files in the folder
+%   base_data_path   path to the base results folder
+%   base_save_path   path to the base folder where extracted results are saved
+%   plot_show_opt    whether to show plot or not while processing     
+%
+% Wu-Jung Lee | leewujung@gmail.com
+% 2017 02 20
 
 if isunix
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
     addpath(['~/internal_2tb/Dropbox/0_CODE/trex_fish/Triplet_processing_toolbox'])
-    base_save_path = '~/internal_2tb/trex/figs_results/';
-    base_data_path = '~/internal_2tb/trex/figs_results/';
 else
     addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
     addpath('F:\Dropbox\0_CODE\trex_fish\Triplet_processing_toolbox')
-    base_save_path = 'F:\trex\figs_results';
-    base_data_path = 'F:\trex\figs_results';
 end
 
 % Set up various paths
-data_path = 'subset_beamform_cardioid_coherent_run087';
 ss = strsplit(data_path,'_');
 run_num = str2double(ss{end}(4:end));
 
 [~,script_name,~] = fileparts(mfilename('fullpath'));
+script_name = script_name(1:end-4);
 save_path = fullfile(base_save_path,sprintf('%s_run%03d',script_name,run_num));
 if ~exist(save_path,'dir')
     mkdir(save_path);
 end
 
 % Ping range
-ping_all = 1:1000;
-plot_opt = 1;
+if isempty(ping_num)
+    data_files = dir(fullfile(base_data_path,data_path,'*.mat'));
+    ping_len = length(data_files);
+else
+    ping_len = length(ping_num);
+end
 
 % Set params
 cmap = 'jet';
@@ -64,16 +77,29 @@ BND = load(fullfile(base_data_path,'bnd.mat'));
 x_rayl = logspace(-3,log10(2000),500);  % standard
 rayl = raylpdf(x_rayl,1/sqrt(2));
 
+% Set up figure
 fig = figure('position',[280 60 1500 500]);
 corder = get(gca,'colororder');
-for iP=1:length(ping_all)
+if ~plot_show_opt  % if not showing figure
+    set(fig,'visible','off');
+end
+
+% Loop through each ping
+for iP=1:ping_len
 
     % Load file and set filename
-    ping_num = ping_all(iP);
-    scat_fname = sprintf('%s_ping%04d.mat',data_path,ping_num);
-    save_fname = sprintf('%s_run%03d_ping%04d',script_name,run_num,ping_num);
-    disp(['Processing ',scat_fname])
-    A = load(fullfile(base_data_path,data_path,scat_fname));
+    if isempty(ping_num)  % if processing all files in the folder
+        fname = data_files(iP).name;
+        ping_num_curr = str2double(fname(end-7:end-4));
+    else
+        fname = sprintf('beamform_%s_%s_run%03d_ping%04d.mat',...
+                        bf_type,coh_type,run_num,ping_num(iP));
+        ping_num_curr = ping_num(iP);
+    end
+    disp(['Processing ',fname])
+    A = load(fullfile(base_data_path,data_path,fname));
+
+    save_fname = sprintf('%s_run%03d_ping%04d',script_name,run_num,ping_num_curr);
     
     % Range/angle index
     [no_r_idx,no_a_idx] = ...
@@ -103,7 +129,7 @@ for iP=1:length(ping_all)
                         wr_a_idx(1):wr_a_idx(2));
     
     % Get SL for spectral calibration
-    if mod(ping_num,2)  % odd number
+    if mod(ping_num_curr,2)  % odd number
         SL = get_SL(run_num,1);  
     else
         SL = get_SL(run_num,2);
@@ -150,11 +176,11 @@ for iP=1:length(ping_all)
 
     % Save file
     save(fullfile(save_path,[save_fname,'.mat']),'-struct','S');
+
     
     %------- PLOT ------------
-    if plot_opt
     title_text = sprintf('Run %d, Ping %d, %02d:%02d:%02d',...
-                         run_num,ping_num,A.data.time_hh_local,...
+                         run_num,ping_num_curr,A.data.time_hh_local,...
                          A.data.time_mm_local,A.data.time_ss_local);
 
     % echogram
@@ -202,8 +228,11 @@ for iP=1:length(ping_all)
     
     saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
         'format','png');
-    end
+
 end
 
 
+if ~plot_show_opt  % if not showing figure
+    close(fig)
+end
 
