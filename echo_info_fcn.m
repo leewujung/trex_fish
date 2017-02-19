@@ -92,8 +92,8 @@ for iP=1:ping_len
         fname = data_files(iP).name;
         ping_num_curr = str2double(fname(end-7:end-4));
     else
-        fname = sprintf('beamform_%s_%s_run%03d_ping%04d.mat',...
-                        bf_type,coh_type,run_num,ping_num(iP));
+        fname = sprintf('%s_ping%04d.mat',...
+                        data_path,ping_num(iP));
         ping_num_curr = ping_num(iP);
     end
     disp(['Processing ',fname])
