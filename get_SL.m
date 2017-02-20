@@ -1,45 +1,38 @@
-function S = get_SL(run_num,wfm_num)
+function S = get_SL(run_num,ping_num)
 % Get source level for a particular run
 %
 % Wu-Jung Lee | leewujung@gmail.com
 % 2016 11 21
 % 2017 01 23  Clean up
+% 2017 02 19  Enable loading each individual MON file for each ping
 
 % Load transmit waveform
 if isunix
-    amp_mon_path = '~/internal_2tb/trex/Data/Amp_mon_data';
+    amp_mon_path = '~/internal_2tb/trex/HAARI_data/Amp_mon_data';
 else
-    amp_mon_path = 'F:\trex\Data\Amp_mon_data';
+    amp_mon_path = 'F:\trex\HAARI_data\Amp_mon_data';
 end
 
 switch run_num
   case 79
     amp_mon_subpath = 'TREX13_MON_13-05-09_21-27-05-925';
-    amp_mon_file = 'TREX13_MON_I00079_P00004.mat';
   case 87
     amp_mon_subpath = 'TREX13_MON_13-05-10_17-54-44-701';
-    amp_mon_file = 'TREX13_MON_I00087_P00010.mat';
   case 94
     amp_mon_subpath = 'TREX13_MON_13-05-11_20-09-48-855';
-    amp_mon_file = 'TREX13_MON_I00094_P00003.mat';
   case 103
     amp_mon_subpath = 'TREX13_MON_13-05-12_19-07-57-592';
-    amp_mon_file = 'TREX13_MON_I00103_P00005.mat';
   case 115
     amp_mon_subpath = 'TREX13_MON_13-05-13_20-40-15-101';
-    amp_mon_file = 'TREX13_MON_I00115_P00010.mat';
+  case 120
+    amp_mon_subpath = 'TREX13_MON_13-05-14_21-27-37-260';
   case 124
     amp_mon_subpath = 'TREX13_MON_13-05-15_21-11-39-716';
-    amp_mon_file = 'TREX13_MON_I00124_P00010.mat';
   case 131
     amp_mon_subpath = 'TREX13_MON_13-05-16_18-28-07-368';
-    switch wfm_num
-      case 1
-        amp_mon_file = 'TREX13_MON_I00131_P00009.mat';
-      case 2
-        amp_mon_file = 'TREX13_MON_I00131_P00010.mat';
-    end
 end
+amp_mon_file = sprintf('TREX13_MON_I%05d_P%05d.mat',run_num,ping_num);
+
 A = load(fullfile(amp_mon_path,amp_mon_subpath,amp_mon_file));
 
 tx_fft = fft(A.ad_data_converted(:,1)*...  % ch0: voltage, ch1: current

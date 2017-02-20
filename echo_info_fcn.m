@@ -22,7 +22,7 @@ function echo_info_fcn(data_path,ping_num,base_save_path,base_data_path,plot_sho
 %   plot_show_opt    whether to show plot or not while processing     
 %
 % Wu-Jung Lee | leewujung@gmail.com
-% 2017 02 20
+% 2017 02 19  make into function and update get_SL
 
 if isunix
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
@@ -129,11 +129,7 @@ for iP=1:ping_len
                         wr_a_idx(1):wr_a_idx(2));
     
     % Get SL for spectral calibration
-    if mod(ping_num_curr,2)  % odd number
-        SL = get_SL(run_num,1);  
-    else
-        SL = get_SL(run_num,2);
-    end
+    SL = get_SL(run_num,ping_num_curr);
 
     % Get raw echo spectrum (without any compensation)
     no_spec = get_spectrum_mtm(no,A.data.sample_freq,win_perc);
