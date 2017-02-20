@@ -11,6 +11,9 @@ function [beamform_norm,meta] = normalizer_split_window(mf,norm_param)
 %
 % OUTPUT
 %   beamform_norm   normalized output
+%   meta.X          X for plotting
+%   meta.Y          Y for plotting
+%   meta.mf_sq_sm   smoothed squared matched filter output
 %
 % Wu-Jung Lee | leewujung@gmail.com
 % 2016/06/28
