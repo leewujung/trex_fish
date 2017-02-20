@@ -159,6 +159,9 @@ for iP=1:ping_len
     %    idx_in_bnd = inpolygon(X_fine_col/1e3,Y_fine_col/1e3,BND.xg,BND.yg);
     energy_in_bnd = sum(A.data.beam_mf_in_time(idx_in_bnd).^2);
 
+    % Get transmission time
+    time_hh = A.data.time_hh_local+A.data.time_mm_local/60+A.data.time_ss_local/3600;
+
     % Store extracted info
     S.no = no;
     S.wr = wr;
@@ -169,6 +172,7 @@ for iP=1:ping_len
     S.stat_no = no_stat;
     S.stat_wr = wr_stat;
     S.energy_in_bnd = energy_in_bnd;
+    S.time_hh = time_hh;
 
     % Save file
     save(fullfile(save_path,[save_fname,'.mat']),'-struct','S');
