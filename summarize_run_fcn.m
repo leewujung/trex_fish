@@ -1,7 +1,14 @@
 % 2017 02 15  Plot variation of total energy within boundary
 %             Use output from echo_info
 
-function A = summarize_run_fcn(run_num,ping_all,plot_opt)
+function A = summarize_run_fcn(run_num,ping_all,wfm_num,plot_opt)
+%
+% INPUT
+%  run_num
+%  ping_all  all ping numbers to be included
+%  wfm_num   waveform number used
+%  plot_opt  whether to plot or not
+
 
 if isunix
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
@@ -27,7 +34,7 @@ if ~exist(save_path,'dir')
     mkdir(save_path);
 end
 
-save_fname = sprintf('%s_run%03d',script_name,run_num);
+save_fname = sprintf('%s_run%03d_wfm%d',script_name,run_num,wfm_num);
 
 % Get results
 energy_in_bnd = nan(length(ping_all),1);
@@ -77,7 +84,9 @@ yrange_s = [0 30];
 
 % Plotting
 if plot_opt
-    figure
+
+    % Plot -- against ping time
+    figure('position',[675 90 570 890])
     subplot(311)
     plot(ping_time,energy_in_bnd_log);
     title('Total energy')
@@ -95,6 +104,7 @@ if plot_opt
     set(gca,'xtick',16:2:32,'xticklabel',num2str([16:2:22,0:2:8]'),...
             'ytick',yrange_w(1):5:yrange_w(2))
     grid
+    legend('W1','W2','location','best')
 
     subplot(313)
     plot(ping_time,si_W1);
@@ -106,8 +116,49 @@ if plot_opt
             'ytick',[0,1,5:5:20])
     grid
     xlabel('Hour of day')
+    legend('W1','W2','location','best')
+
+    suplabel(sprintf('Run %d, wfm %d',run_num,wfm_num),'t');  % super title
 
     % Save figure
-    saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
+    saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'_time.png']),...
                      'format','png');
+
+    % Plot --- against ping number
+    figure('position',[675 90 570 890])
+    subplot(311)
+    plot(ping_all,energy_in_bnd_log);
+    title('Total energy')
+    ylim(yrange_e)
+    set(gca,'ytick',yrange_e(1):5:yrange_e(2))
+    grid
+
+    subplot(312)
+    plot(ping_all,max_W1_log);
+    hold on
+    plot(ping_all,max_W2_log);
+    title('Max echo level');
+    ylim(yrange_w)
+    set(gca,'ytick',yrange_w(1):5:yrange_w(2))
+    legend('W1','W2','location','best')
+    grid
+
+    subplot(313)
+    plot(ping_all,si_W1);
+    hold on
+    plot(ping_all,si_W2);
+    title('Scintillation index')
+    ylim([0 20])
+    set(gca,'ytick',[0,1,5:5:20])
+    grid
+    xlabel('Ping number')
+    legend('W1','W2','location','best')
+
+    suplabel(sprintf('Run %d, wfm %d',run_num,wfm_num),'t');  % super title
+
+    % Save figure
+    saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'_pingnum.png']),...
+                     'format','png');
+
+
 end
