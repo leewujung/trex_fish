@@ -59,8 +59,8 @@ for iR=1:length(run_num_all)
         ping_idx(1) = [];
     end
     ping_time = A(iR).ping_time(ping_idx);
-    max_W1 = 10*log10(A(iR).max_W1(ping_idx));
-    max_W2 = 10*log10(A(iR).max_W2(ping_idx));
+    max_W1 = 20*log10(A(iR).max_W1(ping_idx));
+    max_W2 = 20*log10(A(iR).max_W2(ping_idx));
     E = 10*log10(A(iR).energy_in_bnd(ping_idx));
     if sm_len~=1
         if iR~=1
@@ -92,7 +92,7 @@ legend(dates,'location','EastOutside')
 xlabel('Hour')
 ylabel('Normalized echo level (dB)')
 title('E_{max} W1')
-axis([19 30 -10 1])
+axis([19 30 -20 2])
 grid on
 set(gca,'xtick',19:30,'xticklabel',{num2str([18:23,0:6]')})
 set(gca,'layer','top')
@@ -102,7 +102,7 @@ legend(dates,'location','EastOutside')
 xlabel('Hour')
 ylabel('Normalized echo level (dB)')
 title('E_{max} W2')
-axis([19 30 -10 1])
+axis([19 30 -20 2])
 grid on
 set(gca,'xtick',19:30,'xticklabel',{num2str([18:23,0:6]')})
 set(gca,'layer','top')
