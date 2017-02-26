@@ -97,10 +97,6 @@ for iP=1:length(ping_all)
                                 no_a_idx(1):no_a_idx(2));
     wr = A.data.beam_mf_in_time(wr_r_idx(1):wr_r_idx(2),...
                                 wr_a_idx(1):wr_a_idx(2));
-    no_env = mf_env.env(no_r_idx(1):no_r_idx(2),...
-                        no_a_idx(1):no_a_idx(2));
-    wr_env = mf_env.env(wr_r_idx(1):wr_r_idx(2),...
-                        wr_a_idx(1):wr_a_idx(2));
     
     % Get SL for spectral calibration
     if mod(ping_num,2)  % odd number
