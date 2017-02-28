@@ -6,20 +6,29 @@ addpath(['~/internal_2tb/Dropbox/0_CODE/trex_fish/Triplet_processing_toolbox'])
 % Set up various paths
 base_save_path = '~/internal_2tb/trex/figs_results/';
 base_data_path = '~/internal_2tb/trex/figs_results/';
-data_path = 'subset_beamform_cardioid_coherent_run131';
 
-ss = strsplit(data_path,'_');
-run_num = str2double(ss{end}(4:end));
+% Set params
+run_num = 87;
+if run_num==87
+    ping_num = [100,164,183,197,231,462,766,835,873,936];  % run 087
+    ori_caxis = [180 210];  % wfm 1 of run 131
+elseif run_num==131
+    ping_num = [13,103,113,261,441,507,651,781,797,813,893];  % run 131
+    if mod(ping_num(1),2)==0
+        ori_caxis = [178 208];  % wfm 2 of run 131
+    else
+        ori_caxis = [180 210];  % wfm 1 of run 131
+    end
+end
+
+% Set up various paths
+data_path = sprintf('subset_beamform_cardioid_coherent_run%03d',run_num);
 
 [~,script_name,~] = fileparts(mfilename('fullpath'));
-script_name = script_name(1:end-4);
 save_path = fullfile(base_save_path,sprintf('%s_run%03d',script_name,run_num));
 if ~exist(save_path,'dir')
     mkdir(save_path);
 end
-
-% Ping range
-ping_num = [507,781,811,894];
 
 % Set params
 cmap = 'jet';
@@ -35,10 +44,6 @@ no_rr = [3.60,3.92];  % Area not including wreck
 no_aa = [-2.45,-2.27];
 wr_rr = [3.92,4.12];  % USS Strength shipwreck
 wr_aa = [-2.40,-2.21];
-
-% Rayleigh distr
-x_rayl = logspace(-3,log10(2000),500);  % standard
-rayl = raylpdf(x_rayl,1/sqrt(2));
 
 % Set up figure
 fig = figure('position',[280 60 1000 500]);
@@ -88,7 +93,7 @@ for iP=1:length(ping_num)
     time_hh = A.data.time_hh_local+A.data.time_mm_local/60+A.data.time_ss_local/3600;
 
     % Rayleigh distribution
-    rayl_x = linspace(min(no_env(:)),max(no_env(:)),500);
+    rayl_x = linspace(min(no_env(:)),max(wr_env(:)),500);
     rayl_p = raylpdf(rayl_x,sqrt(no_stat.lambda/2));
 
     %------- PLOT ------------
@@ -97,22 +102,25 @@ for iP=1:length(ping_num)
                          A.data.time_mm_local,A.data.time_ss_local);
 
     % echogram
-    subplot(121);
+    subplot(121)
     cla
-    h = plot_small_echogram(subplot(131),A,sm_len,color_axis,axis_lim);
+    h = plot_small_echogram(subplot(121),A,sm_len,color_axis,axis_lim);
     hold on
     plot(no_pie_x/1e3,no_pie_y/1e3,'m','linewidth',2);
     plot(wr_pie_x/1e3,wr_pie_y/1e3,'m','linewidth',2);
     hold off
+    colorbar('location','southoutside')
 
     subplot(122)  % stat
     cla
-    hray = loglog(rayl_x,rayl_p,'color',ones(1,3)*170/255,'linewidth',2);
+    hray = loglog(rayl_x,rayl_p,'color',ones(1,3)*220/255,'linewidth',2);
     hold on
     hno_scat_kde = loglog(no_stat.x_kde,no_stat.px_kde,...
-                          'color',corder(1,:),'linewidth',2);
+                          'color',corder(1,:),'marker','.','markersize',8,...
+                          'linewidth',0.5,'linestyle','none');
     hwr_scat_kde = loglog(wr_stat.x_kde,wr_stat.px_kde,...
-                          'color',[153,204,255]/255,'linewidth',2);
+                          'color',corder(2,:),'marker','.','markersize',8,...
+                          'linewidth',0.5,'linestyle','none');
     ll = legend('Rayleigh','no wreck','wreck');
     set(ll,'fontsize',11,'location','southoutside')
     axis([5e3 5e8 1e-10 3e-6])
