@@ -1,19 +1,26 @@
 % 2017 02 26  Echogram with echo pdf side-by-sidefor selected pings in run 131
 
-addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
-addpath(['~/internal_2tb/Dropbox/0_CODE/trex_fish/Triplet_processing_toolbox'])
-
 % Set up various paths
-base_save_path = '~/internal_2tb/trex/figs_results/';
-base_data_path = '~/internal_2tb/trex/figs_results/';
+if isunix
+    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
+    addpath('~/internal_2tb/trex/trex_fish_code/Triplet_processing_toolbox');
+    base_save_path = '~/internal_2tb/trex/figs_results/';
+    base_data_path = '~/internal_2tb/trex/figs_results/';
+else
+    addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
+    addpath('F:\Dropbox\0_CODE\MATLAB\epsutil');
+    addpath('F:\trex\trex_fish_code\Triplet_processing_toolbox');
+    base_save_path = 'F:\trex\figs_results';
+    base_data_path = 'F:\trex\figs_results';
+end
 
 % Set params
-run_num = 87;
+run_num = 131;
 if run_num==87
     ping_num = [100,164,183,197,231,462,766,835,873,936];  % run 087
     ori_caxis = [180 210];  % wfm 1 of run 131
 elseif run_num==131
-    ping_num = [13,103,113,261,441,507,651,781,797,813,893];  % run 131
+    ping_num = [49,95,103,113,441,455,507,781,795,797,813];  % run 131
     if mod(ping_num(1),2)==0
         ori_caxis = [178 208];  % wfm 2 of run 131
     else
@@ -46,7 +53,7 @@ wr_rr = [3.92,4.12];  % USS Strength shipwreck
 wr_aa = [-2.40,-2.21];
 
 % Set up figure
-fig = figure('position',[280 60 1000 500]);
+fig = figure('position',[280 60 800 500]);
 corder = get(gca,'colororder');
 
 % Loop through each ping
@@ -110,28 +117,35 @@ for iP=1:length(ping_num)
     plot(wr_pie_x/1e3,wr_pie_y/1e3,'m','linewidth',2);
     hold off
     colorbar('location','southoutside')
-
+    set(gca,'fontsize',12,'xtick',-4.3:1:-1.3,'ytick',-4.5:1:-1.5);
+    axis([-4.3 -1.3 -4.5 -1.5]);
+    xlabel('Distance (km)','fontsize',16)
+    ylabel('Distance (km)','fontsize',16)
+    
     subplot(122)  % stat
     cla
     hray = loglog(rayl_x,rayl_p,'color',ones(1,3)*220/255,'linewidth',2);
     hold on
     hno_scat_kde = loglog(no_stat.x_kde,no_stat.px_kde,...
-                          'color',corder(1,:),'marker','.','markersize',8,...
-                          'linewidth',0.5,'linestyle','none');
+                          'color',corder(1,:),'marker','.','markersize',12,...
+                          'linewidth',0.5,'linestyle','-');
     hwr_scat_kde = loglog(wr_stat.x_kde,wr_stat.px_kde,...
-                          'color',corder(2,:),'marker','.','markersize',8,...
-                          'linewidth',0.5,'linestyle','none');
+                          'color',corder(2,:),'marker','.','markersize',12,...
+                          'linewidth',0.5,'linestyle','-');
     ll = legend('Rayleigh','no wreck','wreck');
-    set(ll,'fontsize',11,'location','southoutside')
-    axis([5e3 5e8 1e-10 3e-6])
-    xlabel('Echo magnitude','fontsize',14)
-    ylabel('PDF','fontsize',14)
-    set(gca,'fontsize',12,'xtick',[1e4,1e6,1e8])
+    set(ll,'fontsize',12,'location','southoutside')
+    axis([5e3 5e7 5e-10 3e-6])
+    xlabel('Echo magnitude','fontsize',16)
+    ylabel('PDF','fontsize',16)
+    set(gca,'fontsize',12,'ytick',[1e-9,1e-8,1e-7,1e-6],...
+        'xtick',[1e4,1e5,1e6,1e7,1e8])
     hold off
     grid
     
     mtit(title_text,'fontsize',16);
     
+    epswrite(fullfile(save_path,[save_fname,'.eps']))
+    saveas(gcf,fullfile(save_path,[save_fname,'.fig']),'fig');
     saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
         'format','png');
 

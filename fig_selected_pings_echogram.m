@@ -2,10 +2,12 @@
 
 if isunix
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
+    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/epsutil');
     base_save_path = '~/internal_2tb/trex/figs_results/';
     base_data_path = '~/internal_2tb/trex/figs_results/';
 else
     addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
+    addpath('F:\Dropbox\0_CODE\MATLAB\epsutil');
     base_save_path = 'F:\trex\figs_results';
     base_data_path = 'F:\trex\figs_results';
 end
@@ -16,7 +18,8 @@ if run_num==87
     ping_num = [100,164,183,197,231,462,766,835,873,936];  % run 087
     color_axis = [180 210];  % wfm 1 of run 131
 elseif run_num==131
-    ping_num = [13,103,113,261,441,507,651,781,797,813,893]+1;  % run 131
+    ping_num = [49,95,103,113,441,455,507,781,795,797,813];  % run 131
+    % ping_num = [49,103,113,261,441,507,651,781,797,813,893];  % ori selection
     if mod(ping_num(1),2)==0
         color_axis = [178 208];  % wfm 2 of run 131
     else
