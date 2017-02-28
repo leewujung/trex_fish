@@ -45,7 +45,6 @@ hold on
 set(h1,'edgecolor','none');
 axis equal
 colormap(jet)
-colorbar('location','southoutside');
 caxis(color_axis)
 axis(axis_lim)
 xlabel('Distance (km)','fontsize',14)

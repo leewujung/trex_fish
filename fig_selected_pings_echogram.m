@@ -1,10 +1,14 @@
 % 2017 02 25  Echogram of the study area for the selected pings in run 131
 
-addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
-%addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/epsutil');
-
-base_data_path = '/home/wu-jung/internal_2tb/trex/figs_results';
-base_save_path = '/home/wu-jung/internal_2tb/trex/figs_results';
+if isunix
+    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
+    base_save_path = '~/internal_2tb/trex/figs_results/';
+    base_data_path = '~/internal_2tb/trex/figs_results/';
+else
+    addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
+    base_save_path = 'F:\trex\figs_results';
+    base_data_path = 'F:\trex\figs_results';
+end
 
 % Set params
 run_num = 131;
@@ -25,7 +29,6 @@ axis_lim = [-4.3 -1.3 -4.5 -1.5];
 % Set up various paths
 data_path = sprintf('subset_beamform_cardioid_coherent_run%03d',run_num);
 ss = strsplit(data_path,'_');
-run_num = str2double(ss{end}(4:end));
 bf_type = ss{2};
 coh_type = ss{3};
 
@@ -88,6 +91,7 @@ for iP=1:ping_len
     fig = plot_small_echogram(fig,A,sm_len,color_axis,axis_lim);
     title(sprintf('Ping %04d, %02d:%02d:%02d',scat_ping,...
                   A.data.time_hh_local,A.data.time_mm_local,A.data.time_ss_local));
+    colorbar('location','southoutside');
 
     % Plot analysis window boundaries
     hold on
@@ -102,7 +106,7 @@ for iP=1:ping_len
     ylabel('Distance from array (km)','fontsize',14)
 
     % Save plot
-    %epswrite(fullfile(save_path,[save_fname,'.eps']));
+    epswrite(fullfile(save_path,[save_fname,'.eps']));
     saveSameSize_150(fig,'file',fullfile(save_path,[save_fname,'.png']),...
                      'format','png');
 end
