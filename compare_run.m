@@ -1,5 +1,7 @@
 % 2017 02 20  Compare trend from all runs
 
+clear
+
 if isunix
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/brewermap');
@@ -22,18 +24,28 @@ end
 % note: not including run103 due to oscillating echo levels
 %       not including run120 since it doesn't include dusk nor dawn
 run_num_all = [79,87,94,115,124,131];
-ping_num{1} = 4:9:877;    % run 79
-ping_num{2} = 1:1:1000;   % run 87
-ping_num{3} = 3:3:899;    % run 94
-ping_num{4} = 2:2:926;    % run 115
-ping_num{5} = 2:2:973;    % run 124
-ping_num{6} = 2:2:1000;   % run 131
+freq = 'HF';  % 'HF' or 'LF'
 dates{1} = 'May 9';
 dates{2} = 'May 10';
 dates{3} = 'May 11';
 dates{4} = 'May 13';
 dates{5} = 'May 15';
 dates{6} = 'May 16';
+if strcmp(freq,'HF')
+    ping_num{1} = 4:9:877;    % run 79
+    ping_num{2} = 1:1:1000;   % run 87
+    ping_num{3} = 3:3:899;    % run 94
+    ping_num{4} = 2:2:926;    % run 115
+    ping_num{5} = 2:2:973;    % run 124
+    ping_num{6} = 2:2:1000;   % run 131
+elseif strcmp(freq,'LF')
+    ping_num{1} = 4:9:877;    % run 79
+    ping_num{2} = 1:1:1000;   % run 87
+    ping_num{3} = 3:3:899;    % run 94
+    ping_num{4} = 1:2:926;    % run 115
+    ping_num{5} = 1:2:973;    % run 124
+    ping_num{6} = 1:2:1000;   % run 131
+end
 
 %      summarize_run_fcn(run_num, ping_all, wfm_num, plot_opt)
 A(1) = summarize_run_fcn(run_num_all(1),ping_num{1},ping_num{1}(1),0);
@@ -41,17 +53,29 @@ for iR=2:length(run_num_all)
     A(iR) = summarize_run_fcn(run_num_all(iR),ping_num{iR},ping_num{iR}(1),0);
 end  
 
-
 % Set plotting params
 time_start = 19;
 time_end = 30;
 time = time_start:0.01:time_end;
 cmap_num = brewermap(length(run_num_all)+2,'Blues');
-set(0,'DefaultAxesColorOrder',cmap_num(3:end,:))
+cmap_num = cmap_num(3:end,:);
+
+% Get sunrise/sunset time
+sunset = 20+mean([22,23,24,25,27,28])/60;    % nautical twilight end
+sunrise = 4+mean([55,54,53,51,50,49])/60+24; % nautical twilight start
+
 
 % Compare all
-sm_len=10;
+sm_len = 10;
 fig_cmp = figure('position',[675 110 810 880]);
+for iS=1:3
+    subplot(3,1,iS)
+    area([sunset,sunrise],[3 3],-25,...
+        'facecolor',ones(1,3)*240/255,'edgecolor','none')
+    hold on
+end
+
+h = zeros(3,length(run_num_all));
 for iR=1:length(run_num_all)
     ping_idx = find(A(iR).ping_time>=time_start & A(iR).ping_time<=time_end);
     if iR==3  % make normalized output look better
@@ -78,46 +102,45 @@ for iR=1:length(run_num_all)
     E_norm = E-max(E);
 
     subplot(311)
-    plot(ping_time,max_W1_norm,'linewidth',1);
-    hold on
+    h(1,iR) = plot(ping_time,max_W1_norm,'linewidth',1,'color',cmap_num(iR,:));
     subplot(312)
-    plot(ping_time,max_W2_norm,'linewidth',1);
-    hold on
+    h(2,iR) = plot(ping_time,max_W2_norm,'linewidth',1,'color',cmap_num(iR,:));
     subplot(313)
-    plot(ping_time,E_norm,'linewidth',1);
-    hold on
+    h(3,iR) = plot(ping_time,E_norm,'linewidth',1,'color',cmap_num(iR,:));
 end
 subplot(311)
-legend(dates,'location','EastOutside')
-xlabel('Hour')
+legend(h(1,:),dates,'location','EastOutside')
+xlabel('Hour of day')
 ylabel('Normalized echo level (dB)')
-title('E_{max} W1')
+title(sprintf('%s, E_{max} W1',freq))
 axis([19 30 -20 2])
 grid on
-set(gca,'xtick',19:30,'xticklabel',{num2str([18:23,0:6]')})
+set(gca,'xtick',19:30,'xticklabel',{num2str([19:23,0:7]')})
 set(gca,'layer','top')
 
 subplot(312)
-legend(dates,'location','EastOutside')
-xlabel('Hour')
+legend(h(2,:),dates,'location','EastOutside')
+xlabel('Hour of day')
 ylabel('Normalized echo level (dB)')
 title('E_{max} W2')
 axis([19 30 -20 2])
 grid on
-set(gca,'xtick',19:30,'xticklabel',{num2str([18:23,0:6]')})
+set(gca,'xtick',19:30,'xticklabel',{num2str([19:23,0:7]')})
 set(gca,'layer','top')
 
 subplot(313)
-legend(dates,'location','EastOutside')
-xlabel('Hour')
+legend(h(3,:),dates,'location','EastOutside')
+xlabel('Hour of day')
 ylabel('Normalized echo level (dB)')
 title('Total energy in boundary')
 axis([19 30 -10 1])
 grid on
-set(gca,'xtick',19:30,'xticklabel',{num2str([18:23,0:6]')})
+set(gca,'xtick',19:30,'xticklabel',{num2str([19:23,0:7]')})
 set(gca,'layer','top')
 
-saveas(gcf,fullfile(save_path,[script_name,'.fig']));
-saveSameSize_150(gcf,'file',fullfile(save_path,[script_name,'.png']),...
+% Save figure
+save_fname = [script_name,sprintf('_smlen%02d_%s',sm_len,freq)];
+saveas(gcf,fullfile(save_path,[save_fname,'.fig']));
+saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
                  'format','png');
 
