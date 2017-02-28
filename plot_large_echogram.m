@@ -1,10 +1,18 @@
 % Function to plot overall echogram
 
-addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
 
-data_path = 'beamform_cardioid_coherent_run087';
-base_data_path = '/media/wu-jung/wjlee_apl_1/trex_results/';
-base_save_path = '/home/wu-jung/internal_2tb/trex/figs_results';
+data_path = 'beamform_cardioid_coherent_run131';
+if isunix
+    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
+    addpath(['~/internal_2tb/trex/trex_fish_code/Triplet_processing_toolbox'])
+    base_data_path = '/media/wu-jung/wjlee_apl_1/trex_results/';
+    base_save_path = '/home/wu-jung/internal_2tb/trex/figs_results';
+else
+    addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
+    addpath('F:\trex\trex_fish_code\Triplet_processing_toolbox')
+    base_data_path = '\\10.95.97.212\Data\wjlee';
+    base_save_path = 'F:\trex\figs_results';
+end
 
 % Set up various paths
 ss = strsplit(data_path,'_');
@@ -21,7 +29,7 @@ if ~exist(save_path,'dir')
 end
 
 % Set params
-ping_num = 1;
+ping_num = 22;
 sm_len = 100;
 
 % Plotting
@@ -81,6 +89,7 @@ set(h2,'edgecolor','none');
 axis equal
 colormap(jet)
 caxis([180 210])
+colorbar
 axis([-7 7 -7 7])
 xlabel('Distance (km)','fontsize',14)
 ylabel('Distance (km)','fontsize',14)
@@ -89,9 +98,10 @@ gray = [1 1 1]*130/255;
 [c,hmap]=contour(Map_X/1000,Map_Y/1000,Map_Z,[0:-4:-30],'color',gray);
 clabel(c,hmap,'fontsize',8,'linewidth',0.5,'Color',gray);
 
-title(sprintf('Ping %04d, %02d:%02d:%02d',scat_ping,...
+title(sprintf('Ping %04d, %02d:%02d:%02d',ping_num,...
               A.data.time_hh_local,A.data.time_mm_local,A.data.time_ss_local))
 
 % Save plot
-saveSameSize_300(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
+% epswrite(fullfile(save_path,[save_fname,'.eps']));
+saveSameSize_600(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
                  'format','png');
