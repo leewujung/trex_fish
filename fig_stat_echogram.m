@@ -100,7 +100,7 @@ for iP=1:length(ping_num)
     time_hh = A.data.time_hh_local+A.data.time_mm_local/60+A.data.time_ss_local/3600;
 
     % Rayleigh distribution
-    rayl_x = linspace(min(no_env(:)),max(wr_env(:)),500);
+    rayl_x = linspace(1e3,1e8,1000);
     rayl_p = raylpdf(rayl_x,sqrt(no_stat.lambda/2));
 
     %------- PLOT ------------
@@ -113,8 +113,8 @@ for iP=1:length(ping_num)
     cla
     h = plot_small_echogram(subplot(121),A,sm_len,color_axis,axis_lim);
     hold on
-    plot(no_pie_x/1e3,no_pie_y/1e3,'m','linewidth',2);
-    plot(wr_pie_x/1e3,wr_pie_y/1e3,'m','linewidth',2);
+    hbox1 = plot(no_pie_x/1e3,no_pie_y/1e3,'m','linewidth',2);
+    hbox2 = plot(wr_pie_x/1e3,wr_pie_y/1e3,'m','linewidth',2);
     hold off
     colorbar('location','southoutside')
     set(gca,'fontsize',12,'xtick',-4.3:1:-1.3,'ytick',-4.5:1:-1.5);
@@ -127,10 +127,10 @@ for iP=1:length(ping_num)
     hray = loglog(rayl_x,rayl_p,'color',ones(1,3)*220/255,'linewidth',2);
     hold on
     hno_scat_kde = loglog(no_stat.x_kde,no_stat.px_kde,...
-                          'color',corder(1,:),'marker','.','markersize',12,...
+                          'color',corder(2,:),'marker','.','markersize',12,...
                           'linewidth',0.5,'linestyle','-');
     hwr_scat_kde = loglog(wr_stat.x_kde,wr_stat.px_kde,...
-                          'color',corder(2,:),'marker','.','markersize',12,...
+                          'color',corder(1,:),'marker','.','markersize',12,...
                           'linewidth',0.5,'linestyle','-');
     ll = legend('Rayleigh','no wreck','wreck');
     set(ll,'fontsize',12,'location','southoutside')
