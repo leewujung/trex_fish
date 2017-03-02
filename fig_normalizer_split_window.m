@@ -5,13 +5,25 @@ addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
 addpath(['~/internal_2tb/Dropbox/0_CODE/trex_fish/Triplet_processing_toolbox'])
 
 % Set up various paths
-base_data_path='~/internal_2tb/trex/figs_results/';
-base_save_path='~/internal_2tb/trex/figs_results/';
+if isunix
+    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
+    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/epsutil');
+    addpath('~/internal_2tb/trex/trex_fish_code/Triplet_processing_toolbox');
+    base_save_path = '~/internal_2tb/trex/figs_results/';
+    base_data_path = '~/internal_2tb/trex/figs_results/';
+else
+    addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
+    addpath('F:\Dropbox\0_CODE\MATLAB\epsutil');
+    addpath('F:\trex\trex_fish_code\Triplet_processing_toolbox');
+    base_save_path = 'F:\trex\figs_results';
+    base_data_path = 'F:\trex\figs_results';
+end
 
 % Set params
-run_num = 87;
+run_num = 131;
 if run_num==87
-    ping_num = [100,164,183,197,231,462,766,835,873,936];  % run 087
+    ping_num = [100,164,183,197,231,462,766,835,873,936,...
+                134,167,201,857];  % run 087
     ori_caxis = [180 210];  % wfm 1 of run 131
 elseif run_num==131
     ping_num = [13,103,113,261,441,507,651,781,797,813,893];  % run 131
@@ -42,7 +54,7 @@ norm_param.guard_num_bw = 2;   % 2/BW
 
 
 % Set up figure
-fig = figure('position',[280 60 1000 500]);
+fig = figure('position',[280 60 800 500]);
 corder = get(gca,'colororder');
 
 % Loop through each ping
@@ -64,8 +76,12 @@ for iP=1:length(ping_num)
                          A.data.time_mm_local,A.data.time_ss_local);
     figure(fig)
     h_ori = plot_small_echogram(subplot(121),A,sm_len,ori_caxis,axis_lim);
-    colorbar('location','southoutside');
-    set(gca,'xtick',-4.3:1:-1.3);
+    colorbar('location','southoutside')
+    set(gca,'fontsize',12,'xtick',-4.3:1:-1.3,'ytick',-4.5:1:-1.5);
+    axis([-4.3 -1.3 -4.5 -1.5]);
+    xlabel('Distance (km)','fontsize',16)
+    ylabel('Distance (km)','fontsize',16)
+    set(gca,'layer','top')
 
     % Get normalizer output
     plot_normalized_echogram(subplot(122),beamform_norm,meta,norm_caxis,axis_lim);
@@ -73,13 +89,25 @@ for iP=1:length(ping_num)
                        norm_param.sm_len,norm_param.aux_m, ...
                        norm_param.guard_num_bw));
     set(tt,'fontsize',12);
-    colorbar('location','southoutside');
-    set(gca,'xtick',-4.3:1:-1.3);
+    colorbar('location','southoutside')
+    set(gca,'fontsize',12,'xtick',-4.3:1:-1.3,'ytick',-4.5:1:-1.5);
+    axis([-4.3 -1.3 -4.5 -1.5]);
+    xlabel('Distance (km)','fontsize',16)
+    ylabel('Distance (km)','fontsize',16)
+    set(gca,'layer','top')
     
     mtit(title_text,'fontsize',16);
     
+    epswrite(fullfile(save_path,[save_fname,'.eps']))
     saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
         'format','png');
+    
+    % bw version
+    colormap(brewermap([],'Greys'))
+    epswrite(fullfile(save_path,[save_fname,'_bw.eps']))
+    saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'_bw.png']),...
+        'format','png');
+
 end
 
 
