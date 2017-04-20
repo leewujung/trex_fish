@@ -1,6 +1,8 @@
 % 2017 02 24  Time series of Emax, total energy, SI, with sunrise/sunset info
 %             for run131
 
+clear
+
 if isunix
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
     addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/brewermap');
@@ -15,9 +17,9 @@ end
 
 % Set up params
 run_num = 131;
-wfm = 1;
+wfm = 2;
 if run_num==87
-    ping_num = 1:1:1000;   % run 131
+    ping_num = wfm:1:1000;   % run 131
     dates = 'May 10';
     sunset = 20+23/60;    % nautical twilight end
     sunrise = 4+54/60+24; % nautical twilight start
@@ -26,10 +28,12 @@ elseif run_num==131
     dates = 'May 16';
     sunset = 20+28/60;    % nautical twilight end
     sunrise = 4+49/60+24; % nautical twilight start
-    stat_ping =  ([49,95,103,113,441,455,507,781,795,797,813]-1)/2+1; % pings to plot echo pdf
-    % original selection: 95,103,441,455,781,795,813
-    echogram_ping = stat_ping; % pings to plot echogram
-    % original selection: 49,103,113,507,781,797,813
+    sel_ping = ([49,95,103,113,441,455,507,589,781,795,797,813]-1)/2+1; % pings to plot
+    if wfm==2
+        sel_ping = sel_ping+1;
+    end
+    % original selection for echo pdf: 95,103,441,455,781,795,813
+    % original selection for echogram: 49,103,113,507,781,797,813
                       
 end
 
@@ -105,10 +109,11 @@ area(time(idx_sunset:idx_sunrise),ones(1,idx_sunrise-idx_sunset+1)*115,75,...
 hold on
 hw1 = plot(ping_time,max_W1_cal,'color',corder(1,:),'linewidth',0.5,'linestyle','-');
 hw2 = plot(ping_time,max_W2_cal,'color',corder(2,:),'linewidth',0.5);
-if exist('echogram_ping')
-    he2 = plot(ping_time(echogram_ping-ping_idx(1)+1),...
-               max_W2_cal(echogram_ping-ping_idx(1)+1),...
-               '.','markersize',14,'color',corder(2,:));
+if exist('sel_ping')
+    for iS=1:length(sel_ping)
+        hsel = plot([1 1]*ping_time(sel_ping(iS)-ping_idx(1)+1),...
+                [75 114],'k--');
+    end
 end
 % hv1 = plot(time(idx_sunset)*[1 1],[75 115],'color',[1 1 1]*170/255,'linewidth',1);
 % hv2 = plot(time(idx_sunrise)*[1 1],[75 115],'color',[1 1 1]*170/255,'linewidth',1);
@@ -129,10 +134,11 @@ hold on
 ht = plot(ping_time,E_cal,'linewidth',0.5,'color','k');
 % hv1 = plot(time(idx_sunset)*[1 1],[19 27],'color',[1 1 1]*170/255,'linewidth',1);
 % hv2 = plot(time(idx_sunrise)*[1 1],[19 27],'color',[1 1 1]*170/255,'linewidth',1);
-if exist('echogram_ping')
-    hte = plot(ping_time(echogram_ping-ping_idx(1)+1),...
-               E_cal(echogram_ping-ping_idx(1)+1),...
-               '.','markersize',14,'color','k');
+if exist('sel_ping')
+    for iS=1:length(sel_ping)
+        hsel = plot([1 1]*ping_time(sel_ping(iS)-ping_idx(1)+1),...
+                [19 28],'k--');
+    end
 end
 if wfm==1
     axis([19 30 19 28])
@@ -152,14 +158,10 @@ area(time(idx_sunset:idx_sunrise),ones(1,idx_sunrise-idx_sunset+1)*-5,30,...
 hold on
 hsi1 = plot(ping_time,si_W1,'linewidth',0.5,'color',corder(1,:));
 hsi2 = plot(ping_time,si_W2,'linewidth',0.5,'color',corder(2,:));
-if exist('stat_ping')
-    for iSP=1:length(stat_ping)
-        %hs1 = plot(ping_time(stat_ping(iSP)-ping_idx(1)+1),...
-        %               si_W1(stat_ping(iSP)-ping_idx(1)+1),...
-        %           'color',corder(1,:),'marker','.','markersize',14);
-        hs2 = plot(ping_time(stat_ping(iSP)-ping_idx(1)+1),...
-                       si_W2(stat_ping(iSP)-ping_idx(1)+1),...
-                   'color',corder(2,:),'marker','.','markersize',14);
+if exist('sel_ping')
+    for iS=1:length(sel_ping)
+        hsel = plot([1 1]*ping_time(sel_ping(iS)-ping_idx(1)+1),...
+                [-5 30],'k--');
     end
 end
 % hv1 = plot(time(idx_sunset)*[1 1],[0 10],'color',[1 1 1]*170/255,'linewidth',1);
@@ -175,7 +177,11 @@ set(gca,'layer','top')
 
 subx = axes;
 set(subx,'Position',[.13 .09 .8 1e-12]);
-set(subx,'xlim',[0 440],'xtick',0:40:440)
+if run_num==131
+    set(subx,'xlim',[0 440],'xtick',0:40:440)
+elseif run_num==87
+    set(subx,'xlim',[80 980],'xtick',80:100:1000)
+end
 xlabel('Ping number')
 
 saveas(gcf,fullfile(save_path,[script_name,sprintf('_wfm%d_time.fig',wfm)]));
@@ -197,7 +203,11 @@ area(ping_num(idx_sunset_ping:idx_sunrise_ping),...
 area(ping_num(idx_sunrise_ping:end),...
      ones(1,length(ping_num)-idx_sunrise_ping+1),...
      'facecolor','white','edgecolor','none')
-set(gca,'ytick',[],'xlim',[0 440],'xtick',0:40:440,'xticklabel','')
+if run_num==131
+    set(gca,'ytick',[],'xlim',[0 440],'xtick',0:40:440,'xticklabel','')
+elseif run_num==87
+    set(gca,'ytick',[],'xlim',[80 980],'xtick',80:100:980,'xticklabel','')
+end
 title(sprintf('Run %d, Wfm %d',run_num,wfm))
 set(gca,'layer','top')
 
@@ -211,10 +221,21 @@ hw1 = plot(ping_num,max_W1_cal,'color',corder(1,:),'linewidth',0.5,'linestyle','
 hw2 = plot(ping_num,max_W2_cal,'color',corder(2,:),'linewidth',0.5);
 % hv1 = plot(time(idx_sunset)*[1 1],[75 115],'color',[1 1 1]*170/255,'linewidth',1);
 % hv2 = plot(time(idx_sunrise)*[1 1],[75 115],'color',[1 1 1]*170/255,'linewidth',1);
-axis([0 440 75 115])
+if exist('sel_ping')
+    for iS=1:length(sel_ping)
+        hsel = plot([1 1]*ping_num(sel_ping(iS)-ping_idx(1)+1),...
+                [75 115],'k--');
+    end
+end
+if run_num==131
+    axis([0 440 75 115])
+    set(gca,'xtick',0:40:440,'xticklabel','')
+elseif run_num==87
+    axis([80 980 75 115])
+    set(gca,'xtick',80:100:980,'xticklabel','')
+end
 grid
 ylabel('SPL (dB re 1 \muPa)')
-set(gca,'xtick',0:40:440,'xticklabel','')
 ll = legend([hw1,hw2],'W1','W2','location','south');
 set(ll,'fontsize',12)
 title('Emax')
@@ -229,30 +250,51 @@ hold on
 he = plot(ping_num,E_cal,'linewidth',0.5,'color','k');
 % hv1 = plot(time(idx_sunset)*[1 1],[19 27],'color',[1 1 1]*170/255,'linewidth',1);
 % hv2 = plot(time(idx_sunrise)*[1 1],[19 27],'color',[1 1 1]*170/255,'linewidth',1);
-if wfm==1
-    axis([0 440 19 28])
-else
-    axis([0 440 19 27])
+if exist('sel_ping')
+    for iS=1:length(sel_ping)
+        hsel = plot([1 1]*ping_num(sel_ping(iS)-ping_idx(1)+1),...
+                [19 28],'k--');
+    end
+end
+if run_num==131
+    if wfm==1
+        axis([0 440 19 28])
+    else
+        axis([0 440 19 27])
+    end
+    set(gca,'xtick',0:40:440,'xticklabel','')
+elseif run_num==87
+    axis([80 980 19 28])
+    set(gca,'xtick',80:100:980,'xticklabel','')
 end
 grid
 ylabel('Energy (dB re 1 \muPa^2-s)')
-set(gca,'xtick',0:40:440,'xticklabel','')
 title('Total energy')
 set(gca,'layer','top')
 
 sub4 = axes;
 set(sub4,'position',[.13 .16 .8 .22])
 area(ping_num(idx_sunset_ping:idx_sunrise_ping),...
-     ones(1,idx_sunrise_ping-idx_sunset_ping+1)*0,10,...
+     ones(1,idx_sunrise_ping-idx_sunset_ping+1)*-5,30,...
      'facecolor',ones(1,3)*240/255,'edgecolor','none')
 hold on
-hsi = plot(ping_num,si_W2,'linewidth',0.5,'color','k');
-% hv1 = plot(time(idx_sunset)*[1 1],[0 10],'color',[1 1 1]*170/255,'linewidth',1);
-% hv2 = plot(time(idx_sunrise)*[1 1],[0 10],'color',[1 1 1]*170/255,'linewidth',1);
-xlabel('Hour of day')
+hsi1 = plot(ping_num,si_W1,'linewidth',0.5,'color',corder(1,:));
+hsi2 = plot(ping_num,si_W2,'linewidth',0.5,'color',corder(2,:));
+if exist('sel_ping')
+    for iS=1:length(sel_ping)
+        hsel = plot([1 1]*ping_num(sel_ping(iS)-ping_idx(1)+1),...
+                [-5 30],'k--');
+    end
+end
+xlabel('Ping number')
 ylabel('SI');
-set(gca,'xtick',0:40:440)
-axis([0 440 0 10])
+if run_num==131
+    set(gca,'xtick',0:40:440)
+    axis([0 440 0 20])
+else
+    set(gca,'xtick',80:100:980)
+    axis([80 980 0 20])
+end
 title('Scintillation index')
 grid
 set(gca,'layer','top')
@@ -260,7 +302,7 @@ set(gca,'layer','top')
 subx = axes;
 set(subx,'Position',[.13 .09 .8 1e-12]);
 set(subx,'xlim',[0 11],'xtick',0:11,'xticklabel',[19:23,0:6])
-xlabel('Ping number')
+xlabel('Hour of day')
 
 saveas(gcf,fullfile(save_path,...
                     [script_name,sprintf('_wfm%d_pingnum.fig',wfm)]));

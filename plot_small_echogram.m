@@ -17,7 +17,11 @@ env = nan(size(A.data.beam_mf_in_time));
 env_sm = nan(size(env));
 for iA=1:size(env,2)
     env(:,iA) = abs(hilbert(A.data.beam_mf_in_time(:,iA)));
-    env_sm(:,iA) = smooth(env(:,iA),sm_len);
+    if sm_len==1
+        env_sm(:,iA) = env(:,iA);
+    else
+        env_sm(:,iA) = smooth(env(:,iA),sm_len);
+    end
 end
 env_sm = env_sm(1:sm_len:end,:);
 

@@ -121,7 +121,8 @@ for iP=1:length(ping_num)
     axis([-4.3 -1.3 -4.5 -1.5]);
     xlabel('Distance (km)','fontsize',16)
     ylabel('Distance (km)','fontsize',16)
-    
+    set(gca,'layer','top')
+
     subplot(122)  % stat
     cla
     hray = loglog(rayl_x,rayl_p,'color',ones(1,3)*220/255,'linewidth',2);
@@ -134,14 +135,15 @@ for iP=1:length(ping_num)
                           'linewidth',0.5,'linestyle','-');
     ll = legend('Rayleigh','no wreck','wreck');
     set(ll,'fontsize',12,'location','southoutside')
-    axis([5e3 5e7 5e-10 3e-6])
+    axis([1e4 5e7 5e-10 3e-6])
     xlabel('Echo magnitude','fontsize',16)
     ylabel('PDF','fontsize',16)
     set(gca,'fontsize',12,'ytick',[1e-9,1e-8,1e-7,1e-6],...
         'xtick',[1e4,1e5,1e6,1e7,1e8])
     hold off
     grid
-    
+    set(gca,'layer','top')
+
     mtit(title_text,'fontsize',16);
     
     epswrite(fullfile(save_path,[save_fname,'.eps']))

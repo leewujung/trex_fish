@@ -29,7 +29,7 @@ if ~exist(save_path,'dir')
 end
 
 % Set params
-ping_num = 22;
+ping_num = 31;
 sm_len = 100;
 
 % Plotting
