@@ -1,5 +1,7 @@
 % 2017 02 26  Revised from plot_normalizer_split_window_output()
 % 2017 02 27  Revised to use plot_normalized_echogram()
+% 2017 04 20  1) raw data use non-detrended echogram
+%             2) change colormap for the normalized output
 
 % Set up various paths
 if isunix
@@ -23,12 +25,13 @@ if run_num==87
                 134,167,201,857];  % run 087
     ori_caxis = [180 210];  % wfm 1 of run 131
 elseif run_num==131
-    ping_num = [23,507,781];
+    ping_num = [23,509,781];
 %     ping_num = [13,103,113,261,441,507,651,781,797,813,893];  % run 131
     if mod(ping_num(1),2)==0
         ori_caxis = [178 208];  % wfm 2 of run 131
     else
-        ori_caxis = [180 210];  % wfm 1 of run 131
+%         ori_caxis = [180 210];  % wfm 1 of run 131--> detrended echo level
+        ori_caxis = [120 150];  % wfm 1 of run 131--> raw echo level
     end
 end
 
@@ -81,11 +84,14 @@ for iP=1:length(ping_num)
 
     
     % Plotting
+%     fig = figure('position',[280 60 800 560]);
+%     corder = get(gca,'colororder');
     figure(fig)
     suptitle(title_text)
     
-    h_ori = plot_small_echogram(subplot(121),A,sm_len,ori_caxis,axis_lim);
-    colorbar('location','southoutside')
+    h_ori = plot_small_echogram_raw(subplot(121),A,sm_len,ori_caxis,axis_lim);
+    caxis([65 95])
+    colorbar('Ticks',65:10:95,'location','southoutside')
     set(gca,'fontsize',12,'xtick',-4.3:1:-1.3,'ytick',-4.5:1:-1.5);
     axis([-4.3 -1.3 -4.5 -1.5]);
     xlabel('Distance (km)','fontsize',16)
@@ -98,22 +104,24 @@ for iP=1:length(ping_num)
                        norm_param.sm_len,norm_param.aux_m, ...
                        norm_param.guard_num_bw));
     set(tt,'fontsize',12);
-    colorbar('location','southoutside')
+    caxis([5 15])
+    colorbar('Ticks',5:2:15,'location','southoutside');
     set(gca,'fontsize',12,'xtick',-4.3:1:-1.3,'ytick',-4.5:1:-1.5);
     axis([-4.3 -1.3 -4.5 -1.5]);
     xlabel('Distance (km)','fontsize',16)
     ylabel('Distance (km)','fontsize',16)
     set(gca,'layer','top')
     
-    epswrite(fullfile(save_path,[save_fname,'.eps']))
+    saveas(fig,fullfile(save_path,[save_fname,'.fig']),'fig');
+    epswrite(fullfile(save_path,[save_fname,'.eps']));
     saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
         'format','png');
     
-    % bw version
-    colormap(brewermap([],'Greys'))
-    epswrite(fullfile(save_path,[save_fname,'_bw.eps']))
-    saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'_bw.png']),...
-        'format','png');
+%     % bw version
+%     colormap(brewermap([],'Greys'))
+%     epswrite(fullfile(save_path,[save_fname,'_bw.eps']))
+%     saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'_bw.png']),...
+%         'format','png');
 
 end
 

@@ -20,6 +20,7 @@ function [beamform_norm,meta,fig] = normalizer_split_window(mf,norm_param,plot_o
 % 2016/06/28
 % 2017/02/06  revise to work with new data format
 %             make it a function
+% 2017/03/08  revise to allow normalization both before and after smoothing
 
 if ~isfield(norm_param,'sm_len')
     norm_param.sm_len = 100;
@@ -41,7 +42,10 @@ end
 mf_sq_sm = mf_sq_sm(1:norm_param.sm_len:end,:);
 
 [beamform_norm,meta] = normalizer(mf,norm_param,mf_sq,1);
-[beamform_norm_sm,meta_sm] = normalizer(mf,norm_param,mf_sq_sm,norm_param.sm_len);
+if plot_opt  % smoothing before normalization 
+             % --> reduced resolution and theoretically not correct
+    [beamform_norm_sm,meta_sm] = normalizer(mf,norm_param,mf_sq_sm,norm_param.sm_len);
+end
 
 if plot_opt
     % Smooth normalized output
