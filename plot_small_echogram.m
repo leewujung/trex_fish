@@ -1,6 +1,7 @@
 function h = plot_small_echogram(h,A,sm_len,color_axis,axis_lim)
 % Function to plot echogram in focused area
 % The echo level is calibrated
+% Plot the "detrended" echo level
 % 
 % INPUT
 %   h   handle of axis to be plotted on
