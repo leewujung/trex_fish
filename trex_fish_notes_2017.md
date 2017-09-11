@@ -1,7 +1,7 @@
 # TREX 13 fish echo analysis @APL
 # Part II (2017)
 
-##############################################
+
 ## 2017/01/13
 Spent this past Mon/Wed/Fri trying to figure out the offset between my beamforming routine and Jie's output. Finally figured out what's going on...
 
@@ -13,7 +13,7 @@ There are 4 compensations that need to be taken into account:
 4. FORA system gain (`gain_sys` in code). This gain is 12 dB for all runs starting from run 41, and 18 dB before that.
 
 
-##############################################
+
 ## 2017/01/23
 ### Calibrate for source level
 Going back to original code `get_SL`. The transmitted voltage is recorded at the output of the power amplifier (L10) before feeding into the transducer (see figure below). Data are called **HAARI**. HAARI files are sorted according to dates and transmit start time. In the data, ch0 is voltage and ch1 is current.
@@ -30,7 +30,7 @@ Updated code `get_SL`:
 	![](../Documents/Jie_cal_notes_sub.jpg){ width=70%}
 
 
-##############################################
+
 ## 2017/01/25, 27
 * Check to make sure `subset_beamform` is getting the right set of data --> Yes
 * Revise `get_pie_outline` to work with degree input and simplied its output to only x,y coordinate points
@@ -72,7 +72,7 @@ Updated code `get_SL`:
 		118.2376
 	```
 
-##############################################
+
 ## 2017/02/01-08
 * Started re-writing the manuscript
 * Updating split-window and energy normalizer code to work with new data format:
@@ -81,7 +81,8 @@ Updated code `get_SL`:
 * For reasons currently unknown, the energy normalizer has "rings" of elevated levels throughout range, corresponding to the locations of nulls in the non-pulse compressed but beamformed time series. **LOOK INTO THIS WHEN HAVE TIME!**
 * The energy normalizer also requires using all data instead of just the subset. This makes processing a lot slower... for now only use the split-window normalizer for the paper.
 
-##############################################
+
+
 ## 2017/02/15
 * Functions to plot echogram:
 	* `plot_small_echogram`: can be called to plot small scale echogram on a given axes handle
@@ -92,5 +93,11 @@ Updated code `get_SL`:
 * Remember that run 94 pings after 573 have not been beamformed
 * Remember to change the part re. ping_num swicth in `get_SL`
 
+
+
+## 2017/09/07
+* Recap to-do's for TREX fish echo paper:
+	* Coherent averaging over night-time frames to determine the actual strength of shipwreck (by assuming water column variability is negligible and that fish influence averages out)
+	* re-do all analysis with matching sizes of AW1 and AW2
 
 
