@@ -8,7 +8,7 @@
 %             use SL to calibrate the spectrum
 %             save info extracted for each ping
 % 2017 01 25  Clean up code to work with new beamforming results
-% 2016 02 19  Make into a function
+
 
 function echo_info_fcn(data_path,ping_num,base_save_path,base_data_path,plot_show_opt)
 % Extract echo level, spectrum, and statistics info from subset beamformed results
@@ -21,12 +21,20 @@ function echo_info_fcn(data_path,ping_num,base_save_path,base_data_path,plot_sho
 %   base_save_path   path to the base folder where extracted results are saved
 %   plot_show_opt    whether to show plot or not while processing     
 %
+% Example: to test this function, set:
+%   data_path = 'subset_beamform_cardioid_coherent_run131';
+%   base_data_path = '~/internal_2tb/trex/figs_results/';
+%   base_save_path = '~/internal_2tb/trex/figs_results/';
+%   ping_num = 100:110;
+%   plot_show_opt = 1;
+%
 % Wu-Jung Lee | leewujung@gmail.com
 % 2017 02 19  make into function and update get_SL
+% 2018 01 13  Make AW2 (empty space) the same size as AW1 (wreck)
 
 if isunix
-    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
-    addpath(['~/internal_2tb/Dropbox/0_CODE/trex_fish/Triplet_processing_toolbox'])
+    addpath('~/code_matlab_dn/saveSameSize');
+    addpath(['~/code_git/trex_fish/Triplet_processing_toolbox'])
 else
     addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
     addpath('F:\Dropbox\0_CODE\trex_fish\Triplet_processing_toolbox')
@@ -38,7 +46,7 @@ run_num = str2double(ss{end}(4:end));
 
 [~,script_name,~] = fileparts(mfilename('fullpath'));
 script_name = script_name(1:end-4);
-save_path = fullfile(base_save_path,sprintf('%s_run%03d',script_name,run_num));
+save_path = fullfile(base_save_path,sprintf('%s_run%03d_new',script_name,run_num));
 if ~exist(save_path,'dir')
     mkdir(save_path);
 end
@@ -61,8 +69,8 @@ axis_lim = [-5 -1 -5 -1];
 color_axis = [180 210];
 
 % Area not including wreck
-no_rr = [3.60,3.92];
-no_aa = [-2.45,-2.27];
+no_rr = [3.71999,3.92];  % modified 2018/01/13 (make sizes of AW2=AW1)
+no_aa = [-2.45,-2.26];
 
 % Wreck only
 wr_rr = [3.92,4.12];  % USS Strength

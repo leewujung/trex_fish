@@ -8,12 +8,14 @@
 %             use SL to calibrate the spectrum
 %             save info extracted for each ping
 % 2017 01 25  Clean up code to work with new beamforming results
+% 2018 01 13  Make AW2 (empty space) the same size as AW1 (wreck)
+
 
 clear
 
 if isunix
-    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
-    addpath(['~/internal_2tb/Dropbox/0_CODE/trex_fish/Triplet_processing_toolbox'])
+    addpath('~/code_matlab_dn/saveSameSize');
+    addpath(['~/code_git/trex_fish/Triplet_processing_toolbox'])
     base_save_path = '~/internal_2tb/trex/figs_results/';
     base_data_path = '~/internal_2tb/trex/figs_results/';
 else
@@ -24,12 +26,12 @@ else
 end
 
 % Set up various paths
-data_path = 'subset_beamform_cardioid_coherent_run087';
+data_path = 'subset_beamform_cardioid_coherent_run131';
 ss = strsplit(data_path,'_');
 run_num = str2double(ss{end}(4:end));
 
 [~,script_name,~] = fileparts(mfilename('fullpath'));
-save_path = fullfile(base_save_path,sprintf('%s_run%03d',script_name,run_num));
+save_path = fullfile(base_save_path,sprintf('%s_run%03d_new',script_name,run_num));
 if ~exist(save_path,'dir')
     mkdir(save_path);
 end
@@ -48,8 +50,8 @@ axis_lim = [-5 -1 -5 -1];
 color_axis = [180 210];
 
 % Area not including wreck
-no_rr = [3.60,3.92];
-no_aa = [-2.45,-2.27];
+no_rr = [3.71999,3.92];  % modified 2018/01/13 (make sizes of AW2=AW1)
+no_aa = [-2.45,-2.26];
 
 % Wreck only
 wr_rr = [3.92,4.12];  % USS Strength
