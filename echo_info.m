@@ -31,7 +31,7 @@ ss = strsplit(data_path,'_');
 run_num = str2double(ss{end}(4:end));
 
 [~,script_name,~] = fileparts(mfilename('fullpath'));
-save_path = fullfile(base_save_path,sprintf('%s_run%03d_new',script_name,run_num));
+save_path = fullfile(base_save_path,sprintf('%s_run%03d',script_name,run_num));
 if ~exist(save_path,'dir')
     mkdir(save_path);
 end
