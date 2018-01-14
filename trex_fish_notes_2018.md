@@ -15,14 +15,27 @@
 - Change AW2 so that the sizes of AW1=AW2. As a result have to run all summary figures again and remake figures.
 	- revised `echo_info.m`, `echo_info_fcn.m`, added `echo_info_runner.m`
 	- rename all results from 2017 (with unequal sizes of AW1 and AW2) to be of the format `unequalAW12_*`
+- New AW2 range and angle extend:
+	```
+	no_rr = [3.71999,3.92];  % modified 2018/01/13 (make sizes of AW2=AW1)
+	no_aa = [-2.45,-2.26];
+	```
+	before it was
+	```
+	no_rr = [3.60,3.92];
+	no_aa = [-2.45,-2.27];
+	```
 
 ************************************************
 ## 2018/01/14
-### Continue on compiling all AW2 results
-- revised `summarize_run_fcn.m` and `summarize_run_fcn_runner.m` --> results saved in `summarize_run` (2017 results in `unequalAW12_summarize_run`)
--
-
-
-Recap to-do's for TREX fish echo paper:
-	* Coherent averaging over night-time frames to determine the actual strength of shipwreck (by assuming water column variability is negligible and that fish influence averages out)
-	* re-do all analysis with matching sizes of AW1 and AW2
+### Continue on updating all AW2 results
+- revised `summarize_run_fcn.m` and `summarize_run_fcn_runner.m`
+	- results saved in `summarize_run` (2017 results in `unequalAW12_summarize_run`)
+	- figures used in Fig. 3-4 of ms v7.0
+- revised `compare_run.m`
+	- results saves in `compare_run` (2017 results in `unequalAW12_compare_run`)
+	- figures used in Fig. 5 of ms v7.0
+- revised `fig_stat_echogram`
+	- results saved in `fig_stat_echogram_run` (2017 results in `unequalAW12_fig_stat_echogram_run*`)
+	- figures used in Fig. 3 of ms v7.0
+- note: `fig_selected_pings_echogram` is for plotting echograms only with windows, and was used to plot the panels in Fig. 2C of ms v5.0 (these panels are moved to form an independent Fig. 2 in ms v7.0)
