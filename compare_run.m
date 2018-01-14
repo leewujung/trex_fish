@@ -1,10 +1,11 @@
 % 2017 02 20  Compare trend from all runs
+% 2018 01 14  Re-plot using new AW2 (matching size with AW1)
 
 clear
 
 if isunix
-    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
-    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/brewermap');
+    addpath('~/code_matlab_dn/saveSameSize');
+    addpath('~/code_matlab_dn/brewermap');
     base_save_path = '~/internal_2tb/trex/figs_results/';
     base_data_path = '~/internal_2tb/trex/figs_results/';
 else
@@ -24,7 +25,7 @@ end
 % note: not including run103 due to oscillating echo levels
 %       not including run120 since it doesn't include dusk nor dawn
 run_num_all = [79,87,94,115,124,131];
-freq = 'HF';  % 'HF' or 'LF'
+freq = 'LF';  % 'HF' or 'LF'
 dates{1} = 'May 9';
 dates{2} = 'May 10';
 dates{3} = 'May 11';
