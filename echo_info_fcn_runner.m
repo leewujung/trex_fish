@@ -1,4 +1,3 @@
-% 2017 02 22  Gather and plot all summary echo info
 % 2018 01 13  Run echo_info_fcn in batch
 
 run_num_all = [79,87,94,103,115,120,124];

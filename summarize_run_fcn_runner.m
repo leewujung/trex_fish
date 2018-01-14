@@ -1,4 +1,5 @@
 % 2017 02 22  Gather and plot all summary echo info
+% 2018 01 14  Re-plot all summary figures after settig the sizes of AW1=AW2
 
 run_num_all = [79,87,94,103,115,120,124,131];
 
@@ -45,7 +46,7 @@ for iR=1:length(run_num_all)
             wfm2 = 2;
         end
         summarize_run_fcn(run_num_all(iR),ping_num1,wfm1,1);
-        summarize_run_fcn(run_num_all(iR),ping_num2,wfm2,2);
+        summarize_run_fcn(run_num_all(iR),ping_num2,wfm2,1);
     end
 end
 
