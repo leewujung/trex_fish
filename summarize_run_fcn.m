@@ -11,7 +11,7 @@ function A = summarize_run_fcn(run_num,ping_all,wfm_num,plot_opt)
 
 
 if isunix
-    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
+    addpath('~/code_matlab_dn/saveSameSize');
     base_save_path = '~/internal_2tb/trex/figs_results/';
     base_data_path = '~/internal_2tb/trex/figs_results/';
 else

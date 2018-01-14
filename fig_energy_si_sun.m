@@ -1,11 +1,12 @@
 % 2017 02 24  Time series of Emax, total energy, SI, with sunrise/sunset info
 %             for run131
+% 2018 01 14  Re-plot with equal-sized AW1 and AW2
 
 clear
 
 if isunix
-    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
-    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/brewermap');
+    addpath('~/code_matlab_dn/saveSameSize');
+    addpath('~/code_matlab_dn/brewermap');
     base_save_path = '~/internal_2tb/trex/figs_results/';
     base_data_path = '~/internal_2tb/trex/figs_results/';
 else
@@ -19,7 +20,7 @@ end
 run_num = 131;
 wfm = 2;
 if run_num==87
-    ping_num = wfm:1:1000;   % run 131
+    ping_num = wfm:1:1000;   % run 87
     dates = 'May 10';
     sunset = 20+23/60;    % nautical twilight end
     sunrise = 4+54/60+24; % nautical twilight start
