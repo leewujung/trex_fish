@@ -1,21 +1,21 @@
 % 2017 02 26  Echogram with echo pdf side-by-sidefor selected pings in run 131
+% 2018 01 14  Re-plot after resizing AW2 to match that of AW1
 
 % Set up various paths
 if isunix
-    addpath('~/internal_2tb/Dropbox/0_CODE/MATLAB/saveSameSize');
-    addpath('~/internal_2tb/trex/trex_fish_code/Triplet_processing_toolbox');
+    addpath('~/code_matlab_dn/saveSameSize');
+    addpath('~/code_git/trex_fish/Triplet_processing_toolbox');
     base_save_path = '~/internal_2tb/trex/figs_results/';
     base_data_path = '~/internal_2tb/trex/figs_results/';
 else
     addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
-    addpath('F:\Dropbox\0_CODE\MATLAB\epsutil');
     addpath('F:\trex\trex_fish_code\Triplet_processing_toolbox');
     base_save_path = 'F:\trex\figs_results';
     base_data_path = 'F:\trex\figs_results';
 end
 
 % Set params
-run_num = 131;
+run_num = 87;
 if run_num==87
     ping_num = [100,164,183,197,231,462,766,835,873,936];  % run 087
     ori_caxis = [180 210];  % wfm 1 of run 131
@@ -47,8 +47,8 @@ axis_lim = [-4.5 -1.5 -4.5 -1.5];
 color_axis = [180 210];
 
 % Analysis windows
-no_rr = [3.60,3.92];  % Area not including wreck
-no_aa = [-2.45,-2.27];
+no_rr = [3.71999,3.92];  % Area not including wreck
+no_aa = [-2.45,-2.26];   % modified 2018/01/14 (make sizes of AW2=AW1)
 wr_rr = [3.92,4.12];  % USS Strength shipwreck
 wr_aa = [-2.40,-2.21];
 
