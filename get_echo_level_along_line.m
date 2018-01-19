@@ -1,4 +1,4 @@
-function echo_level = get_echo_level_along_line(A,sm_len,I)
+function echo_level = get_echo_level_along_line(A,sm_len,I,r_proj,dl)
 % INPUT
 %   A        beamformed results
 %   sm_len   length of smoothing for plotting
@@ -35,5 +35,7 @@ TL_comp = repmat(30*log10(A.data.range_beam_sm)',...
 env_final = 20*log10(env_sm)+total_gain_crd_coh-3+TL_comp;
 env_final = env_final(:);
 
-% Get echo level at input index
-echo_level = env_final(I);
+% Get echo level through 2D interpolation
+echo_level = interp1(r_proj,env_final(I),dl.r_vec,'linear','extrap');
+
+
