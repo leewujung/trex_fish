@@ -47,7 +47,7 @@ for iA=1:length(angle_all)
     % Marks and directions for fish expansion and contraction
     wr_ctr = [-2.749, -2.948];   % center of wreck
     dl.a = angle_all(iA);        % [deg] degree from +x-axis
-    dl.r_total = 1.5;            % [km] range from center of wreck
+    dl.r_total = 1.6;            % [km] range from center of wreck
     dl.unit_vec = [cos(dl.a/180*pi),sin(dl.a/180*pi)];
     dl.end = wr_ctr + dl.r_total*[cos(dl.a/180*pi),sin(dl.a/180*pi)];
 
