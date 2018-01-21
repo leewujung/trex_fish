@@ -48,10 +48,11 @@ for iA=1:length(angle_all)
     wr_ctr = [-2.749, -2.948];   % center of wreck
     dl.a = angle_all(iA);        % [deg] degree from +x-axis
     dl.r_total = 1.6;            % [km] range from center of wreck
+    dl.r_diff_div = 4;
     dl.unit_vec = [cos(dl.a/180*pi),sin(dl.a/180*pi)];
     dl.end = wr_ctr + dl.r_total*[cos(dl.a/180*pi),sin(dl.a/180*pi)];
 
-    dl.r_vec = 0:mean(diff(A.data.range_beam))/5:dl.r_total;
+    dl.r_vec = 0:mean(diff(A.data.range_beam))/dl.r_diff_div:dl.r_total;
     dl.xy_vec = repmat(wr_ctr,length(dl.r_vec),1) +...
         dl.r_vec'*[cos(dl.a/180*pi),sin(dl.a/180*pi)];
     [I,xy_loc,r_proj] = get_xyloc_along_line(A,sm_len,wr_ctr,dl);
@@ -108,7 +109,8 @@ for iA=1:length(angle_all)
     S.time_hh = time_hh;
 
     % Save results
-    save_fname = sprintf('%s_run%03d_angle%d_results',run_num,script_name,dl.a);
+    save_fname = sprintf('%s_run%03d_angle%d_div%d_results',...
+                         run_num,script_name,dl.a,dl.r_diff_div);
     save(fullfile(save_path,[save_fname,'.mat']),'-struct','S');
 
 
@@ -125,8 +127,8 @@ for iA=1:length(angle_all)
     caxis([180 210])
     set(gca,'ytick',16:2:32,'yticklabel',num2str([16:2:22,0:2:8]'));
 
-    save_fname = sprintf('%s_run%03d_angle%04d_raw', ...
-                         script_name,run_num,dl.a);
+    save_fname = sprintf('%s_run%03d_angle%04d_div%d_raw', ...
+                         script_name,run_num,dl.a,dl.r_diff_div);
     epswrite(fullfile(save_path,[save_fname,'.eps']))
     saveas(gcf,fullfile(save_path,[save_fname,'.fig']),'fig');
     saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
@@ -142,8 +144,8 @@ for iA=1:length(angle_all)
         caxis([180 210])
         set(gca,'ytick',16:2:32,'yticklabel',num2str([16:2:22,0:2:8]'));    
         
-        save_fname = sprintf('%s_run%03d_angle%d_medfilt%d-%d',...
-                             script_name,run_num,dl.a, ...
+        save_fname = sprintf('%s_run%03d_angle%d_div%d_medfilt%d-%d',...
+                             script_name,run_num,dl.a,dl.r_diff_div, ...
                              medfilt_sz(iM,1),medfilt_sz(iM,2));
                 epswrite(fullfile(save_path,[save_fname,'.eps']))
         saveas(gcf,fullfile(save_path,[save_fname,'.fig']),'fig');
