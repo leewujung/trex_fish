@@ -29,7 +29,7 @@ angle_all = -90:30:90;
 
 
 % Load 1 file to calculate location params
-scat_fname = sprintf('%s_ping%04d.mat',data_path,100);
+scat_fname = sprintf('%s_ping%04d.mat',data_path,113);
 A = load(fullfile(base_data_path,data_path,scat_fname));
 
 

@@ -12,7 +12,7 @@ base_data_path = '~/internal_2tb/trex/figs_results/';
 data_path = 'fish_speed_run131';
 ss = strsplit(data_path,'_');
 run_num = str2double(ss{end}(4:end));
-div = 1;
+div = 4;
 
 [~,script_name,~] = fileparts(mfilename('fullpath'));
 save_path = fullfile(base_save_path,sprintf('%s_run%03d',script_name,run_num));
@@ -56,8 +56,8 @@ for iA=1:length(angle_all)
     end
 
     % Misc
-    xlabel('Range from center of wreck (km)');
-    ylabel('Local time (hour)');
+    xlabel('Range from center of wreck (km)','color','k');
+    ylabel('Local time (hour)','color','k');
     title(sprintf('Echo level, %d deg, medfilt [%d,%d]',...
                   angle_all(iA),medfilt_sz(1),medfilt_sz(2)));
     caxis(color_axis)
@@ -65,6 +65,9 @@ for iA=1:length(angle_all)
     set(gca,'ytick',16:0.25:32,'yticklabel',num2str([16:0.25:22,0:0.25:8]'));    
     ylim(A.time_hh([1 pingnum_show]))
     colormap(cmap)
+    ax = gca;
+    ax.XAxis.Color = 'k';
+    ax.YAxis.Color = 'k';
 
     save_fname = sprintf('%s_run%03d_angle%04d_div%d_medfilt%d-%d',...
                          script_name,run_num,A.directional_line.a,...
