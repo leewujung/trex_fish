@@ -12,6 +12,7 @@ base_data_path = '~/internal_2tb/trex/figs_results/';
 data_path = 'fish_speed_run131';
 ss = strsplit(data_path,'_');
 run_num = str2double(ss{end}(4:end));
+div = 4;
 
 [~,script_name,~] = fileparts(mfilename('fullpath'));
 save_path = fullfile(base_save_path,sprintf('%s_run%03d',script_name,run_num));
@@ -21,7 +22,7 @@ end
 
 % Set params
 cmap = 'jet';
-color_axis = [180 200];
+color_axis = [180 210];
 pingnum_show = 100;
 medfilt_sz = [11,3];
 speed_all = 0:0.1:1;    % range of speed to plot [m/s]
@@ -32,8 +33,8 @@ angle_all = -90:30:90;  % angles to read data from [deg]
 for iA=1:length(angle_all)
 
     % Load data
-    data_fname = sprintf('%s_angle%d_results.mat',...
-                         strjoin(ss(1:2),'_'),angle_all(iA));
+    data_fname = sprintf('%s_run%03d_angle%d_div%d_results.mat',...
+                         strjoin(ss(1:2),'_'),run_num,angle_all(iA),div);
     A = load(fullfile(base_data_path,data_path,data_fname));
 
     % Calculate speed ref lines
@@ -47,8 +48,8 @@ for iA=1:length(angle_all)
             medfilt2(A.echo_level,[11,3]));
     % Plot speed ref lines
     hold on
-    %hx = plot(0,20,'w.','linewidth',2,'markersize',16);
-    %hx.Color(4) = 0.4;  % add alpha property
+    hx = plot(0,20,'w.','linewidth',2,'markersize',16);
+    hx.Color(4) = 0.4;  % add alpha property
     hl = plot(lines_x,lines_y,'w','linewidth',1);
     for ih=1:length(hl)
         hl(ih).Color(4) = 0.4;
