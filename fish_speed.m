@@ -109,7 +109,7 @@ for iA=1:length(angle_all)
     S.time_hh = time_hh;
 
     % Save results
-    save_fname = sprintf('%s_run%03d_angle%d_div%d_results',...
+    save_fname = sprintf('%s_run%03d_angle%04d_div%d_results',...
                          script_name,run_num,dl.a,dl.r_diff_div);
     save(fullfile(save_path,[save_fname,'.mat']),'-struct','S');
 
@@ -146,7 +146,7 @@ for iA=1:length(angle_all)
         colorbar
         set(gca,'ytick',16:2:32,'yticklabel',num2str([16:2:22,0:2:8]'));    
         
-        save_fname = sprintf('%s_run%03d_angle%d_div%d_medfilt%d-%d',...
+        save_fname = sprintf('%s_run%03d_angle%04d_div%d_medfilt%d-%d',...
                              script_name,run_num,dl.a,dl.r_diff_div, ...
                              medfilt_sz(iM,1),medfilt_sz(iM,2));
                 epswrite(fullfile(save_path,[save_fname,'.eps']))
