@@ -20,6 +20,7 @@ Y = Y(:);
 
 % Find closest index
 [D,I] = pdist2([X,Y]/1e3,dl.xy_vec,'euclidean','SMALLEST',1);
+I = unique(I);
 %ii = sort(abs(diff(I)),'descend');
 %I = I(abs(diff(I))>mean(ii(1:5))/4);
 
