@@ -23,7 +23,7 @@ end
 % Set params
 cmap = 'jet';
 color_axis = [180 210];
-pingnum_show = [30,100];
+pingnum_show = [30,90];
 medfilt_sz = [11,3];
 speed_all = 0:0.1:1;    % range of speed to plot [m/s]
 angle_all = 90:-30:-90;  % angles to read data from [deg]
@@ -102,13 +102,14 @@ for iA=1:length(angle_all)
     ylim(A.time_hh([pingnum_show(1) pingnum_show(2)]))
     colormap(cmap)
 
-    save_fname = sprintf('%s_run%03d_angle%04d_div%d_medfilt%d-%d',...
-                         script_name,run_num,A.directional_line.a,...
-                         div,medfilt_sz(1),medfilt_sz(2));
-    epswrite(fullfile(save_path,[save_fname,'.eps']))
-    saveas(gcf,fullfile(save_path,[save_fname,'.fig']),'fig');
-    saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
-                     'format','png');
-
 end
+
+save_fname = sprintf('%s_run%03d_div%d_medfilt%d-%d',...
+                     script_name,run_num,...
+                     div,medfilt_sz(1),medfilt_sz(2));
+epswrite(fullfile(save_path,[save_fname,'.eps']))
+saveas(gcf,fullfile(save_path,[save_fname,'.fig']),'fig');
+saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
+                 'format','png');
+
 
