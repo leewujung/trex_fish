@@ -42,7 +42,7 @@ A = load(fullfile(base_data_path,data_path,scat_fname));
 
 
 angle_all = -90:15:90;
-for iA=1:length(angle_all)
+for iA=5:length(angle_all)
 
     % Marks and directions for fish expansion and contraction
     wr_ctr = [-2.749, -2.948];   % center of wreck
@@ -110,7 +110,7 @@ for iA=1:length(angle_all)
 
     % Save results
     save_fname = sprintf('%s_run%03d_angle%d_div%d_results',...
-                         run_num,script_name,dl.a,dl.r_diff_div);
+                         script_name,run_num,dl.a,dl.r_diff_div);
     save(fullfile(save_path,[save_fname,'.mat']),'-struct','S');
 
 
