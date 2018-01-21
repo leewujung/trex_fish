@@ -12,7 +12,7 @@ base_data_path = '~/internal_2tb/trex/figs_results/';
 data_path = 'fish_speed_run131';
 ss = strsplit(data_path,'_');
 run_num = str2double(ss{end}(4:end));
-div = 4;
+div = 1;
 
 [~,script_name,~] = fileparts(mfilename('fullpath'));
 save_path = fullfile(base_save_path,sprintf('%s_run%03d',script_name,run_num));
@@ -33,7 +33,7 @@ angle_all = -90:30:90;  % angles to read data from [deg]
 for iA=1:length(angle_all)
 
     % Load data
-    data_fname = sprintf('%s_run%03d_angle%d_div%d_results.mat',...
+    data_fname = sprintf('%s_run%03d_angle%04d_div%d_results.mat',...
                          strjoin(ss(1:2),'_'),run_num,angle_all(iA),div);
     A = load(fullfile(base_data_path,data_path,data_fname));
 
@@ -66,9 +66,9 @@ for iA=1:length(angle_all)
     ylim(A.time_hh([1 pingnum_show]))
     colormap(cmap)
 
-    save_fname = sprintf('%s_run%03d_angle%d_medfilt%d-%d',...
+    save_fname = sprintf('%s_run%03d_angle%04d_div%d_medfilt%d-%d',...
                          script_name,run_num,A.directional_line.a,...
-                         medfilt_sz(1),medfilt_sz(2));
+                         div,medfilt_sz(1),medfilt_sz(2));
     epswrite(fullfile(save_path,[save_fname,'.eps']))
     saveas(gcf,fullfile(save_path,[save_fname,'.fig']),'fig');
     saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...
