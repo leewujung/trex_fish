@@ -41,8 +41,8 @@ scat_fname = sprintf('%s_ping%04d.mat',data_path,100);
 A = load(fullfile(base_data_path,data_path,scat_fname));
 
 
-angle_all = -90:15:90;
-for iA=5:length(angle_all)
+angle_all = -90:30:90;
+for iA=1:length(angle_all)
 
     % Marks and directions for fish expansion and contraction
     wr_ctr = [-2.749, -2.948];   % center of wreck
