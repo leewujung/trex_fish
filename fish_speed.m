@@ -125,6 +125,7 @@ for iA=5:length(angle_all)
     ylabel('Local time (hour)');
     title('Raw echo level');
     caxis([180 210])
+    colorbar
     set(gca,'ytick',16:2:32,'yticklabel',num2str([16:2:22,0:2:8]'));
 
     save_fname = sprintf('%s_run%03d_angle%04d_div%d_raw', ...
@@ -142,6 +143,7 @@ for iA=5:length(angle_all)
         ylabel('Local time (hour)');
         title(sprintf('Echo level, medfilt [%d,%d]',medfilt_sz(iM,1),medfilt_sz(iM,2)));
         caxis([180 210])
+        colorbar
         set(gca,'ytick',16:2:32,'yticklabel',num2str([16:2:22,0:2:8]'));    
         
         save_fname = sprintf('%s_run%03d_angle%d_div%d_medfilt%d-%d',...
