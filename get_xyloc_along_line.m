@@ -20,10 +20,15 @@ Y = Y(:);
 
 % Find closest index
 [D,I] = pdist2([X,Y]/1e3,dl.xy_vec,'euclidean','SMALLEST',1);
-I = sort(unique(I),'descend');
+I = unique(I);
 
-% Output
+% Pseudo-output
 xy_loc = [X(I),Y(I)]/1e3;
 r_proj = (xy_loc-repmat(wr_ctr,size(xy_loc,1),1))*dl.unit_vec';
 %r_loc = pdist2(wr_ctr,xy_loc,'euclidean')';
+
+% Output
+[r_proj,ir] = sort(r_proj,'ascend');
+I = I(ir);
+xy_loc = xy_loc(ir,:);
 
