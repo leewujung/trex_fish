@@ -100,6 +100,7 @@ for iA=1:length(angle_all)
     ax.XAxis.MinorTick = 'on';
     ax.XAxis.MinorTickValues = [16:0.25:32];
     ylim(A.time_hh([pingnum_show(1) pingnum_show(2)]))
+    xlim([0,1.6]);
     colormap(cmap)
 
 end
