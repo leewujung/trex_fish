@@ -29,13 +29,26 @@
 ************************************************
 ## 2018/01/14
 ### Continue on updating all AW2 results
-- revised `summarize_run_fcn.m` and `summarize_run_fcn_runner.m`
+- Revised `summarize_run_fcn.m` and `summarize_run_fcn_runner.m`
 	- results saved in `summarize_run` (2017 results in `unequalAW12_summarize_run`)
 	- figures used in Fig. 3-4 of ms v7.0
-- revised `compare_run.m`
+- Revised `compare_run.m`
 	- results saves in `compare_run` (2017 results in `unequalAW12_compare_run`)
 	- figures used in Fig. 5 of ms v7.0
-- revised `fig_stat_echogram`
+- Revised `fig_stat_echogram`
 	- results saved in `fig_stat_echogram_run` (2017 results in `unequalAW12_fig_stat_echogram_run*`)
 	- figures used in Fig. 3 of ms v7.0
-- note: `fig_selected_pings_echogram` is for plotting echograms only with windows, and was used to plot the panels in Fig. 2C of ms v5.0 (these panels are moved to form an independent Fig. 2 in ms v7.0)
+- Note: `fig_selected_pings_echogram` is for plotting echograms only with windows, and was used to plot the panels in Fig. 2C of ms v5.0 (these panels are moved to form an independent Fig. 2 in ms v7.0)
+
+
+************************************************
+## 2018/01/19-21
+### Quantitative estimation of fish speed
+- Felt the best way to present fish speed is to present how the fish echoes spread along a particular direction from the center of the wreck (i.e., a radial line extending from the wreck center).
+- This should probably be done over multiple directions (multiple radial lines) to show the variability, which may also make the estimation more convincing.
+- Use the following 4 code for fish speed estimation
+	- `fish_speed.m`:
+		- Call`get_xyloc_along_line.m` find the set of x-y locations (`xy_loc`) that are nearest to the wanted locations (`dl.xy_vec`) and calculate the projected range from wreck (`r_proj`) along the specified direction (`dl.a`)
+		- Call `get_echo_level_along_line.m` to use 1D interpolation to interpolate for fish echo level at the wanted range/locations (`echo_level`).
+	- Note that to get `dl.xy_vec` there is a parameter to tune how fine the wanted locations are spaced (`dl.r_diff_div`). This parameter is explored by using `dl.r_diff_div = 1, 2, 4`.
+	- `fish_speed_line_check.m`: compare the wanted and nearest x-y locations and projected range along a certain direction when suing different `dl.r_diff_div` values.
