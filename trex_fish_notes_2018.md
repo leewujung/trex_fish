@@ -52,3 +52,22 @@
 		- Call `get_echo_level_along_line.m` to use 1D interpolation to interpolate for fish echo level at the wanted range/locations (`echo_level`).
 	- Note that to get `dl.xy_vec` there is a parameter to tune how fine the wanted locations are spaced (`dl.r_diff_div`). This parameter is explored by using `dl.r_diff_div = 1, 2, 4`.
 	- `fish_speed_line_check.m`: compare the wanted and nearest x-y locations and projected range along a certain direction when suing different `dl.r_diff_div` values.
+
+
+************************************************
+## 2018/03/07
+### Re-calculate total echo energy
+- Realized that the current total echo energy was not correctly calculated: the cross-angle delta length is not taken into account during integration.
+- The total echo energy figure (in version `figs_20180115`) is produced by `fig_energy_si_sun.m` in which the compensation for delta length in integration and calibration factors are done right before plotting. However the cross-angle delta length cannot be compensated once the values within AW3 are added (in this line `energy_in_bnd = sum(A.data.beam_mf_in_time(idx_in_bnd).^2);`). This has to be corrected.
+- In the corrected version (`figs_20180307`) the integration factors are done in `echo_info_fcn` so that the cross-angle delta length can be factored in properly. Both `echo_info_fcn.m` and `fig_energy_si_sun.m` needs to be changed.
+- Spent some time to figure out units...
+  - Pa = kg.m^-1.s^-2
+  - 1 Pa = 1 N/m^2 = 1 kg/(m.s^2) = 1 J/m^3
+  - (power) Watt = kg.s^-3.m^2
+  - (energy) Joule = Watt.s = kg.s^-2.m^2
+  - Here we have: Pa^2.m.s = Watt.m^-3 ==> unit of power density? the unit is equivalent to Watt/mass density
+- Sequence of code to be run to make new total echo energy plot:
+  1. `echo_info_fcn_runner`
+  2. `summarize_run_fcn_runner`
+  3. `compare_run` --> there is a one panel of total echo energy in this compariso across multiple days
+  4. `fig_energy_si_sum` --> the total echo energy figure in the paper is extracted from a panel in this figure
