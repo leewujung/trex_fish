@@ -75,3 +75,25 @@
   3. `compare_run` --> there is a one panel of total echo energy in this compariso across multiple days
   4. `fig_energy_si_sum` --> the total echo energy figure in the paper is extracted from a panel in this figure
 - The variation of total echo energy remains almost identical
+- Note the total echo energy plotted in `compare_run` are the incorrect ones (without proper delta along range and across angle), but it's virtually identical.
+
+
+************************************************
+## 2018/03/08
+### Revising split-window normalizer output figure
+- Need to find good examples that correspond with the theme in the text.
+- Decided to use the following pings: 23, 49, 103, 509. 781
+  - ping 23 and 49 will show the fluctuating fish clutter to the southwest of the shipwreck
+  - ping 49 to 103 will show similar normalizer output but very different echo pdf (when compared with Fig.3)
+  - ping 509 will show shipwreck echo partially smeared by fish echoes, and fish scattering elevates the reverberation level
+  - ping 781 will show a near-dawn snapshot and also the fish echo clutter as in ping 23 and 49
+- The new Fig.7 use sm_len=150 to make the shipwreck normalizer output more visible
+
+
+
+
+
+
+
+
+
