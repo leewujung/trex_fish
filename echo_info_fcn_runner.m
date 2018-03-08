@@ -1,6 +1,7 @@
 % 2018 01 13  Run echo_info_fcn in batch
 
-run_num_all = [79,87,94,103,115,120,124];
+%run_num_all = [79,87,94,103,115,120,124];
+run_num_all = 131;
 
 base_data_path = '~/internal_2tb/trex/figs_results/';
 base_save_path = '~/internal_2tb/trex/figs_results/';

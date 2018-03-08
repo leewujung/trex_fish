@@ -1,6 +1,9 @@
 % 2017 02 24  Time series of Emax, total energy, SI, with sunrise/sunset info
 %             for run131
 % 2018 01 14  Re-plot with equal-sized AW1 and AW2
+% 2018 03 07  Re-plot with updated total echo energy calculation
+%             `A.energy_in_bnd` from the updated `echo_info_fcn`
+%             results is properly integrated along range and across angle
 
 clear
 
@@ -18,7 +21,7 @@ end
 
 % Set up params
 run_num = 131;
-wfm = 2;
+wfm = 1;
 if run_num==87
     ping_num = wfm:1:1000;   % run 87
     dates = 'May 10';
@@ -78,7 +81,6 @@ total_gain_crd_coh = B.param.gain_load -...
 max_W1_cal = max_W1+total_gain_crd_coh-3;  % compensate for gain and hilbert
 max_W2_cal = max_W2+total_gain_crd_coh-3;
 E_cal = E+total_gain_crd_coh-3;
-E_cal = 10*log10(10.^(E_cal/20)/B.data.sample_freq);
 
 % Get sun phase sine
 f = 1/(sunrise-sunset)/2;
@@ -138,16 +140,16 @@ ht = plot(ping_time,E_cal,'linewidth',0.5,'color','k');
 if exist('sel_ping')
     for iS=1:length(sel_ping)
         hsel = plot([1 1]*ping_time(sel_ping(iS)-ping_idx(1)+1),...
-                [19 28],'k--');
+                [99 116],'k--');
     end
 end
 if wfm==1
-    axis([19 30 19 28])
+    axis([19 30 100 115])
 else
-    axis([19 30 19 27])
+    axis([19 30 100 115])
 end
 grid
-ylabel('Energy (dB re 1 \muPa^2-s)')
+ylabel('Energy (dB re 1 \muPa^2-m-s)')
 set(gca,'xtick',19:30,'xticklabel','')
 title('Total energy')
 set(gca,'layer','top')
@@ -254,22 +256,22 @@ he = plot(ping_num,E_cal,'linewidth',0.5,'color','k');
 if exist('sel_ping')
     for iS=1:length(sel_ping)
         hsel = plot([1 1]*ping_num(sel_ping(iS)-ping_idx(1)+1),...
-                [19 28],'k--');
+                [99 116],'k--');
     end
 end
 if run_num==131
     if wfm==1
-        axis([0 440 19 28])
+        axis([0 440 100 115])
     else
-        axis([0 440 19 27])
+        axis([0 440 100 115])
     end
     set(gca,'xtick',0:40:440,'xticklabel','')
 elseif run_num==87
-    axis([80 980 19 28])
+    axis([80 980 100 115])
     set(gca,'xtick',80:100:980,'xticklabel','')
 end
 grid
-ylabel('Energy (dB re 1 \muPa^2-s)')
+ylabel('Energy (dB re 1 \muPa^2-m-s)')
 title('Total energy')
 set(gca,'layer','top')
 
