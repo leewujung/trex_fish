@@ -25,8 +25,10 @@ if run_num==87
                 134,167,201,857];  % run 087
     ori_caxis = [180 210];  % wfm 1 of run 131
 elseif run_num==131
-    ping_num = [23,509,781];
+    %     ping_num = [23,509,781];  % pings used in v7 figures
 %     ping_num = [13,103,113,261,441,507,651,781,797,813,893];  % run 131
+    ping_num = [23,509,49,95,103,113,441,455,...
+                507,589,781,795,797,813];  % pings from fig_energy_si_sun
     if mod(ping_num(1),2)==0
         ori_caxis = [178 208];  % wfm 2 of run 131
     else
@@ -35,18 +37,9 @@ elseif run_num==131
     end
 end
 
-% Set up various paths
-data_path = sprintf('subset_beamform_cardioid_coherent_run%03d',run_num);
-
-[~,script_name,~] = fileparts(mfilename('fullpath'));
-save_path = fullfile(base_save_path,sprintf('%s_run%03d',script_name,run_num));
-if ~exist(save_path,'dir')
-    mkdir(save_path);
-end
-
 % Set params
 cmap = 'jet';
-sm_len = 100;
+sm_len = 150;
 axis_lim = [-4.3 -1.3 -4.5 -1.5];
 norm_caxis = [5 15];
 norm_param.sm_len = sm_len;    % smooth length
@@ -54,6 +47,15 @@ norm_param.aux_m = 200;        % length of auxiliary band in [m]
 norm_param.guard_num_bw = 2;   % 2/BW
 norm_detail_plot = 0;
 
+
+% Set up various paths
+data_path = sprintf('subset_beamform_cardioid_coherent_run%03d',run_num);
+
+[~,script_name,~] = fileparts(mfilename('fullpath'));
+save_path = fullfile(base_save_path,sprintf('%s_run%03d_smlen%03d',script_name,run_num,sm_len));
+if ~exist(save_path,'dir')
+    mkdir(save_path);
+end
 
 % Set up figure
 fig = figure('position',[280 60 800 560]);
