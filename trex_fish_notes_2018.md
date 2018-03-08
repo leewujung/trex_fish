@@ -66,8 +66,12 @@
   - (power) Watt = kg.s^-3.m^2
   - (energy) Joule = Watt.s = kg.s^-2.m^2
   - Here we have: Pa^2.m.s = Watt.m^-3 ==> unit of power density? the unit is equivalent to Watt/mass density
+- Consolidate folders with old results
+  - Moved all `echo_info_run*` folders from Jan 2018 to under folder `echo_info_201801`
+  - Moved all `unequalAW12_echo_info_run*` folders from 2017 to under folder `echo_info_201702_unequalAW12`
 - Sequence of code to be run to make new total echo energy plot:
   1. `echo_info_fcn_runner`
   2. `summarize_run_fcn_runner`
   3. `compare_run` --> there is a one panel of total echo energy in this compariso across multiple days
   4. `fig_energy_si_sum` --> the total echo energy figure in the paper is extracted from a panel in this figure
+- The variation of total echo energy remains almost identical
