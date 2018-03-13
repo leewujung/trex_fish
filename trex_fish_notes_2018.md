@@ -90,6 +90,10 @@
 - The new Fig.7 use sm_len=150 to make the shipwreck normalizer output more visible
 
 
+************************************************
+## 2018/03/09
+### Make new videos showing the emergence and convergence of fish
+
 
 
 
