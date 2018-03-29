@@ -8,7 +8,7 @@ end
 
 
 % Set params
-run_num = 87;
+run_num = 131;
 
 for wfm_num=1  % loop through waveforms
 
@@ -56,14 +56,15 @@ for scat_ping = ping_num_all
     fig = plot_small_echogram(fig,A,sm_len,color_axis,axis_lim);
     title(sprintf('Ping %04d, %02d:%02d:%02d',scat_ping,...
                   A.data.time_hh_local,A.data.time_mm_local,A.data.time_ss_local));
-    colorbar('location','southoutside');
+    hcb = colorbar('location','southoutside');
+    xlabel(hcb,'Detrended SPL (dB)','fontsize',14,'fontweight','bold');
 
     % Plot analysis window boundaries
     axis equal
     set(gca,'fontsize',12,'xlim',axis_lim(1:2),'ylim',axis_lim(3:4));
     set(gca,'xtick',-4.3:1:-1.3,'ytick',-4.5:1:-1.5);
-    xlabel('Distance from array (km)','fontsize',14)
-    ylabel('Distance from array (km)','fontsize',14)
+    xlabel('X (km)','fontsize',14,'fontweight','bold');
+    ylabel('Y (km)','fontsize',14,'fontweight','bold');
 
     % Save plot
     saveSameSize_150(fig,'file',fullfile(save_path,[save_fname,'.png']),...
