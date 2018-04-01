@@ -167,9 +167,7 @@ for iP=1:ping_len
 
     % Integrate properly within the irregular boundary BND
     del_along_range = 1/A.data.sample_freq;   % interval along range [sec]
-    del_cross_angle = A.data.range_beam*sin(1/180*pi); % interval across angle [meter]
-    energy_integrand = A.data.beam_mf_in_time.^2 .*...
-        repmat(del_cross_angle',1,length(A.data.polar_angle)) *del_along_range;
+    energy_integrand = A.data.beam_mf_in_time.^2 *del_along_range;
     energy_in_bnd = sum(energy_integrand(idx_in_bnd));
 
     % Get transmission time
