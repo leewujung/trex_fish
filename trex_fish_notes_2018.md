@@ -98,7 +98,7 @@
 
 
 ************************************************
-## 2018/04/01
+## 2018/04/01-02
 ### Investigate beamwidths from different waveforms
 - I modified an old code `beamwidth_cmp_MF_noMF` to investigate this
 - The new code is `beamwidth_cmp_nb_bb` in which I compare the beamwidths resulted from narrowband signals from 1.8:0.1:3.6 kHz with those from broadband signals (1.8-2.7 kHz and 2.7-3.6 kHz). These are the frequencies used in run 131.
@@ -115,7 +115,8 @@
 - functions updated:
   - `echo_info_fcn`
   - `echo_info_fcn_runner`
-  - `fig_energy_si_sun` --> to be finished
+  - `fig_energy_si_sun`
+- updated figure file in ms, old fig_energy_si_sun files from March 2018 were saved under `fig_energy_si_sun_201803` in `/trex_fish/figs_results` folder and under ms fig folder `matlab_figs_20180401`.
 
 
 
