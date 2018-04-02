@@ -24,8 +24,8 @@ scat_ping = 1;
 fname = sprintf('%s_ping%04d.mat',data_path,scat_ping);
 A = load(fullfile(base_data_path,data_path,fname));
 
-% Beamform param
-th = -87:0.1:87;  % defined from broadside
+% Beamform param and array coordinates
+th = -90:0.01:90;  % defined from broadside
 th = th/180*pi;
 freq = [1.8:0.1:3.6]*1e3;
 cw = 1525;  % sound speed
@@ -34,6 +34,7 @@ k = 2*pi*freq/cw;
 array_coord_mean = mean(A.param.array_coord,1);
 dY = A.param.array_coord(:,2)-array_coord_mean(2);
 
+% Beamforming
 phase_delay = zeros(length(freq),length(dY),length(th));
 beam = zeros(length(freq),length(th));
 for iF=1:length(freq)
@@ -48,14 +49,48 @@ beam_mf_incoh_HF = sum(abs(beam(10:end,:)).^2,1);
 beam_mf_coh_All = abs(sum(beam,1).^2);
 beam_mf_incoh_All = sum(abs(beam).^2,1);
 
+% Calculate percentage of energy included in beam
+th_0deg = round(length(th)/2);
+beam_cum_e_coh_LF = cumsum(beam_mf_coh_LF(th_0deg:end));
+beam_cum_e_coh_LF = beam_cum_e_coh_LF/beam_cum_e_coh_LF(end);
+
+% Plot accumulated beam energy from 0 deg
+figure;
+plot(th(th_0deg:end)/pi*180,beam_cum_e_coh_LF);
+xlim([0,10]);
+xlabel('Angle (degree)','fontsize',14);
+ylabel('Normalized accumulated energy','fontsize',14);
+title('Normalized accumulated energy');
+grid
+saveas(gcf,fullfile(save_path,[script_name,'_cum_e_coh_LF_lin.fig']),'fig');
+saveas(gcf,fullfile(save_path,[script_name,'_cum_e_coh_LF_lin.png']),'png');
+
+figure;
+plot(th(th_0deg:end)/pi*180,10*log10(beam_cum_e_coh_LF));
+xlim([0,10]);
+ylim([-6 0]);
+xlabel('Angle (degree)','fontsize',14);
+ylabel('Normalized accumulated energy (dB)','fontsize',14);
+title('Normalized accumulated energy');
+grid
+saveas(gcf,fullfile(save_path,[script_name,'_cum_e_coh_LF_log.fig']),'fig');
+saveas(gcf,fullfile(save_path,[script_name,'_cum_e_coh_LF_log.png']),'png');
+
+
+
+% Plot beampatterns for comparison
 figure
 h = plot(th/pi*180,beam_log_norm,'color',[1 1 1]*170/255);
 hold on
 h3600 = plot(th/pi*180,beam_log_norm(end,:),'k','linewidth',1);
-hmf_incoh_LF = plot(th/pi*180,10*log10(beam_mf_incoh_LF)-max(10*log10(beam_mf_incoh_LF)),'b','linewidth',1);
-hmf_coh_LF = plot(th/pi*180,10*log10(beam_mf_coh_LF)-max(10*log10(beam_mf_coh_LF)),'r','linewidth',1);
-hmf_incoh_HF = plot(th/pi*180,10*log10(beam_mf_incoh_HF)-max(10*log10(beam_mf_incoh_HF)),'b--','linewidth',1);
-hmf_coh_HF = plot(th/pi*180,10*log10(beam_mf_coh_HF)-max(10*log10(beam_mf_coh_HF)),'r--','linewidth',1);
+hmf_incoh_LF = plot(th/pi*180,10*log10(beam_mf_incoh_LF)-max(10*log10(beam_mf_incoh_LF)),...
+                    'b','linewidth',1);
+hmf_coh_LF = plot(th/pi*180,10*log10(beam_mf_coh_LF)-max(10*log10(beam_mf_coh_LF)),...
+                  'r','linewidth',1);
+hmf_incoh_HF = plot(th/pi*180,10*log10(beam_mf_incoh_HF)-max(10*log10(beam_mf_incoh_HF)),...
+                    'b--','linewidth',1);
+hmf_coh_HF = plot(th/pi*180,10*log10(beam_mf_coh_HF)-max(10*log10(beam_mf_coh_HF)),...
+                  'r--','linewidth',1);
 legend([h(1),h3600,hmf_coh_LF,hmf_incoh_LF,hmf_coh_HF,hmf_incoh_HF],...
        '1.8:0.1:3.6 kHz','3.6 kHz',...
        '1.8-2.7 kHz coherent','1.8-2.7 kHz incoherent',...
