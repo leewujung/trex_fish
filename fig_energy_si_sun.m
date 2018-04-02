@@ -4,6 +4,9 @@
 % 2018 03 07  Re-plot with updated total echo energy calculation
 %             `A.energy_in_bnd` from the updated `echo_info_fcn`
 %             results is properly integrated along range and across angle
+% 2018 04 01  Re-plot total echo energy: degree is dimensionless
+%             but need to account for the finer beamform directions
+%             wrt actual beamwidth (beamwidth obtained from `beamwidth_cmp_nb_bb.m`)
 
 clear
 
@@ -69,7 +72,8 @@ ping_time = A.ping_time(ping_idx);
 ping_num = ping(ping_idx);
 max_W1 = 20*log10(A.max_W1(ping_idx));
 max_W2 = 20*log10(A.max_W2(ping_idx));
-E = 10*log10(A.energy_in_bnd(ping_idx));
+E = 10*log10(A.energy_in_bnd(ping_idx)/3.56); % beamformed angles are at 1-deg resolution, but
+                                              % actual -3dB beanwidth is 3.56 degrees
 si_W1 = A.si_W1(ping_idx);
 si_W2 = A.si_W2(ping_idx);
 
@@ -81,6 +85,14 @@ total_gain_crd_coh = B.param.gain_load -...
 max_W1_cal = max_W1+total_gain_crd_coh-3;  % compensate for gain and hilbert
 max_W2_cal = max_W2+total_gain_crd_coh-3;
 E_cal = E+total_gain_crd_coh-3;
+% ==== below are to try to reproduce wrong numbers from before ========
+%E_uncor = 10*log10(A.energy_in_bnd(ping_idx));
+%E_old = 10*log10(A.energy_in_bnd(ping_idx)*B.data.sample_freq);
+%E_cal_uncor = E_uncor+total_gain_crd_coh-3;
+%E_cal_old = E_old+total_gain_crd_coh-3;
+%E_cal_old = 10*log10(10.^(E_cal_old/20)/B.data.sample_freq);
+% ====================================================================
+
 
 % Get sun phase sine
 f = 1/(sunrise-sunset)/2;
@@ -140,16 +152,16 @@ ht = plot(ping_time,E_cal,'linewidth',0.5,'color','k');
 if exist('sel_ping')
     for iS=1:length(sel_ping)
         hsel = plot([1 1]*ping_time(sel_ping(iS)-ping_idx(1)+1),...
-                [99 116],'k--');
+                [75 92],'k--');
     end
 end
 if wfm==1
-    axis([19 30 100 115])
+    axis([19 30 76 91])
 else
-    axis([19 30 100 115])
+    axis([19 30 76 91])
 end
 grid
-ylabel('Energy (dB re 1 \muPa^2-m-s)')
+ylabel('Energy (dB re 1 \muPa^2-s)')
 set(gca,'xtick',19:30,'xticklabel','')
 title('Total energy')
 set(gca,'layer','top')
@@ -256,22 +268,22 @@ he = plot(ping_num,E_cal,'linewidth',0.5,'color','k');
 if exist('sel_ping')
     for iS=1:length(sel_ping)
         hsel = plot([1 1]*ping_num(sel_ping(iS)-ping_idx(1)+1),...
-                [99 116],'k--');
+                [75 92],'k--');
     end
 end
 if run_num==131
     if wfm==1
-        axis([0 440 100 115])
+        axis([0 440 76 91])
     else
-        axis([0 440 100 115])
+        axis([0 440 76 91])
     end
     set(gca,'xtick',0:40:440,'xticklabel','')
 elseif run_num==87
-    axis([80 980 100 115])
+    axis([80 980 76 91])
     set(gca,'xtick',80:100:980,'xticklabel','')
 end
 grid
-ylabel('Energy (dB re 1 \muPa^2-m-s)')
+ylabel('Energy (dB re 1 \muPa^2-s)')
 title('Total energy')
 set(gca,'layer','top')
 
