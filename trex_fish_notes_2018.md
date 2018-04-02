@@ -101,12 +101,18 @@
 ## 2018/04/01-02
 ### Investigate beamwidths from different waveforms
 - I modified an old code `beamwidth_cmp_MF_noMF` to investigate this
-- The new code is `beamwidth_cmp_nb_bb` in which I compare the beamwidths resulted from narrowband signals from 1.8:0.1:3.6 kHz with those from broadband signals (1.8-2.7 kHz and 2.7-3.6 kHz). These are the frequencies used in run 131.
+- The new code renamed `beamwidth_cmp_nb_bb` in which I compare the beamwidths resulted from narrowband signals from 1.8:0.1:3.6 kHz with those from broadband signals (1.8-2.7 kHz and 2.7-3.6 kHz). These are the frequencies used in run 131.
 - In the paper all figures are from echograms from the 1.8-2.7 kHz waveform.
 - I suspect the 2.2 deg figure is from 3.6 kHz.
 - The results are intuitive: both broadband signals produce wider beamwidth than the 3.6 kHz signal, and the 2.7-3.6 kHz signal produces narrower beam than the 1.8-2.7 kHz signal.
+  ![](./notes_img/beamwidth_cmp_nb_bb.png)
+  ![](./notes_img/beamwidth_cmp_nb_bb_zoom.png)
 - These results are confirmed visuallly by inspecting the echograms from run 087 (narrowband) and run 131 (broadband with the above 2 waveforms).
-- All comparison figures are saved in the folder `beamwidth_cmp_MF_noMF`.
+- All comparison figures are saved in the folder `beamwidth_cmp_nb_bb`.
+- Check the accumulated beam energy with increasing angle to confirm that counting only up to -3 dB full beamwidth point is sufficient to incorporate most of the energy:
+  ![](./notes_img/beamwidth_cmp_nb_bb_cum_e_coh_LF_lin.png)
+  ![](./notes_img/beamwidth_cmp_nb_bb_cum_e_coh_LF_log.png)
+
 
 ### Re-do the total echo energy figure again
 - DJ and I spent some time sorting out the units for the figure
