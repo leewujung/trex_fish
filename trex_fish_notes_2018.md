@@ -91,11 +91,31 @@
 
 
 ************************************************
-## 2018/03/09
+## 2018/03/09,13,29
 ### Make new videos showing the emergence and convergence of fish
+- Make sure to plot axes as X and Y instead of Distance as before
+- The final movies were assembled in Premiere using individual frames plotted using `fig_echogram_for_movie.m`
 
 
+************************************************
+## 2018/04/01
+### Investigate beamwidths from different waveforms
+- I modified an old code `beamwidth_cmp_MF_noMF` to investigate this
+- The new code is `beamwidth_cmp_nb_bb` in which I compare the beamwidths resulted from narrowband signals from 1.8:0.1:3.6 kHz with those from broadband signals (1.8-2.7 kHz and 2.7-3.6 kHz). These are the frequencies used in run 131.
+- In the paper all figures are from echograms from the 1.8-2.7 kHz waveform.
+- I suspect the 2.2 deg figure is from 3.6 kHz.
+- The results are intuitive: both broadband signals produce wider beamwidth than the 3.6 kHz signal, and the 2.7-3.6 kHz signal produces narrower beam than the 1.8-2.7 kHz signal.
+- These results are confirmed visuallly by inspecting the echograms from run 087 (narrowband) and run 131 (broadband with the above 2 waveforms).
+- All comparison figures are saved in the folder `beamwidth_cmp_MF_noMF`.
 
+### Re-do the total echo energy figure again
+- DJ and I spent some time sorting out the units for the figure
+- Basically it boils down to the fact that angle is dimensionless, and therefore the integration results should still with the untis **1uPa^2-sec**. What I did earlier to integrate over distance in the cross-beam direction doesn't make sense.
+- The beam resolution issue can be solved by normalizing the number of beamformed directions (the resolution) by the actual beamwidth (i.e., how many directions are beamformed within 2.2 degree).
+- functions updated:
+  - `echo_info_fcn`
+  - `echo_info_fcn_runner`
+  - `fig_energy_si_sun` --> to be finished
 
 
 
