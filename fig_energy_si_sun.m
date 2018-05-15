@@ -7,29 +7,33 @@
 % 2018 04 01  Re-plot total echo energy: degree is dimensionless
 %             but need to account for the finer beamform directions
 %             wrt actual beamwidth (beamwidth obtained from `beamwidth_cmp_nb_bb.m`)
+% 2018 05 15  Plot for run 129 & 130
 
 clear
 
-if isunix
-    addpath('~/code_matlab_dn/saveSameSize');
-    addpath('~/code_matlab_dn/brewermap');
-    base_save_path = '~/internal_2tb/trex/figs_results/';
-    base_data_path = '~/internal_2tb/trex/figs_results/';
-else
-    addpath('F:\Dropbox\0_CODE\MATLAB\saveSameSize');
-    addpath('F:\Dropbox\0_CODE\MATLAB\brewermap');
-    base_save_path = 'F:\trex\figs_results';
-    base_data_path = 'F:\trex\figs_results';
-end
+addpath('~/code_matlab_dn/saveSameSize');
+addpath('~/code_matlab_dn/brewermap');
+base_save_path = '~/internal_2tb/trex/figs_results/';
+base_data_path = '~/internal_2tb/trex/figs_results/';
 
 % Set up params
-run_num = 131;
+run_num = 130;
 wfm = 1;
 if run_num==87
     ping_num = wfm:1:1000;   % run 87
     dates = 'May 10';
     sunset = 20+23/60;    % nautical twilight end
     sunrise = 4+54/60+24; % nautical twilight start
+elseif run_num==129
+    ping_num = wfm:2:210;   % run 129
+    dates = 'May 16';
+    sunset = 20+28/60;    % nautical twilight end
+    sunrise = 4+49/60+24; % nautical twilight start
+elseif run_num==130
+    ping_num = wfm:2:170;   % run 130
+    dates = 'May 16';
+    sunset = 20+28/60;    % nautical twilight end
+    sunrise = 4+49/60+24; % nautical twilight start
 elseif run_num==131
     ping_num = wfm:2:1000;   % run 131
     dates = 'May 16';
@@ -61,9 +65,22 @@ B = load(fullfile(base_data_path,...
             dum,run_num,dum,run_num)));
 
 % Set plotting params
-time_start = 19;
-time_end = 30;
+if run_num==87 || run_num==131  % overnight sessions
+    time_start = 19;
+    time_end = 30;
+elseif run_num==129   % afternoon session
+    time_start = 15;
+    time_end = 17;
+elseif run_num==130   % afternoon session
+    time_start = 16.5;
+    time_end = 18.5;
+end
 time = time_start:0.01:time_end;
+if time_end-time_start>1
+    time_gap = 1;
+else
+    time_gap = 0.1;
+end
 
 % Get energy measures
 ping = 1:length(A.ping_time);
@@ -107,23 +124,33 @@ fig_cmp = figure('position',[675 110 600 880]);
 corder = get(gca,'colororder');
 
 set(gca,'position',[.13 .94 .8 .02]);
-area(time(1:idx_sunset),ones(1,idx_sunset),'facecolor','white','edgecolor','none')
-hold on
-area(time(idx_sunset:idx_sunrise),ones(1,idx_sunrise-idx_sunset+1),...
-     'facecolor','k','edgecolor','none')
-area(time(idx_sunrise:end),ones(1,length(time)-idx_sunrise+1),...
-     'facecolor','white','edgecolor','none')
-set(gca,'ytick',[],'xlim',[19 30],'xtick',19:30,'xticklabel','')
+if run_num==87 || run_num==131
+    area(time(1:idx_sunset),ones(1,idx_sunset),...
+         'facecolor','white','edgecolor','none')
+    hold on
+    area(time(idx_sunset:idx_sunrise),ones(1,idx_sunrise-idx_sunset+1),...
+         'facecolor','k','edgecolor','none')
+    area(time(idx_sunrise:end),ones(1,length(time)-idx_sunrise+1),...
+         'facecolor','white','edgecolor','none')
+end
+set(gca,'ytick',[],'xlim',[time_start time_end],...
+        'xtick',time_start:time_gap:time_end,'xticklabel','')
 title(sprintf('Run %d, Wfm %d',run_num,wfm))
 set(gca,'layer','top')
 
 sub2 = axes;
 set(sub2,'position',[.13 .68 .8 .22])
-area(time(idx_sunset:idx_sunrise),ones(1,idx_sunrise-idx_sunset+1)*115,75,...
-     'facecolor',ones(1,3)*240/255,'edgecolor','none')
-hold on
-hw1 = plot(ping_time,max_W1_cal,'color',corder(1,:),'linewidth',0.5,'linestyle','-');
-hw2 = plot(ping_time,max_W2_cal,'color',corder(2,:),'linewidth',0.5);
+if run_num==87 || run_num==131
+    area(time(idx_sunset:idx_sunrise),ones(1,idx_sunrise-idx_sunset+1)*115,75,...
+         'facecolor',ones(1,3)*240/255,'edgecolor','none')
+    hold on
+else
+    hw1 = plot(ping_time,max_W1_cal,'color',corder(1,:),...
+               'linewidth',0.5,'linestyle','-');
+    hold on
+    hw2 = plot(ping_time,max_W2_cal,'color',corder(2,:),...
+               'linewidth',0.5);
+end
 if exist('sel_ping')
     for iS=1:length(sel_ping)
         hsel = plot([1 1]*ping_time(sel_ping(iS)-ping_idx(1)+1),...
@@ -132,10 +159,10 @@ if exist('sel_ping')
 end
 % hv1 = plot(time(idx_sunset)*[1 1],[75 115],'color',[1 1 1]*170/255,'linewidth',1);
 % hv2 = plot(time(idx_sunrise)*[1 1],[75 115],'color',[1 1 1]*170/255,'linewidth',1);
-axis([19 30 75 115])
+axis([time_start time_end 75 115])
 grid
 ylabel('SPL (dB re 1 \muPa)')
-set(gca,'xtick',19:30,'xticklabel','')
+set(gca,'xtick',time_start:time_gap:time_end,'xticklabel','')
 ll = legend([hw1,hw2],'W1','W2','location','south');
 set(ll,'fontsize',12)
 title('Emax')
@@ -143,9 +170,11 @@ set(gca,'layer','top')
 
 sub3 = axes;
 set(sub3,'position',[.13 .42 .8 .22])
-area(time(idx_sunset:idx_sunrise),ones(1,idx_sunrise-idx_sunset+1)*19,28,...
-     'facecolor',ones(1,3)*240/255,'edgecolor','none')
-hold on
+if run_num==87 || run_num==131
+    area(time(idx_sunset:idx_sunrise),ones(1,idx_sunrise-idx_sunset+1)*19,28,...
+         'facecolor',ones(1,3)*240/255,'edgecolor','none')
+    hold on
+end
 ht = plot(ping_time,E_cal,'linewidth',0.5,'color','k');
 % hv1 = plot(time(idx_sunset)*[1 1],[19 27],'color',[1 1 1]*170/255,'linewidth',1);
 % hv2 = plot(time(idx_sunrise)*[1 1],[19 27],'color',[1 1 1]*170/255,'linewidth',1);
@@ -156,22 +185,25 @@ if exist('sel_ping')
     end
 end
 if wfm==1
-    axis([19 30 76 91])
+    axis([time_start time_end 76 91])
 else
-    axis([19 30 76 91])
+    axis([time_start time_end 76 91])
 end
 grid
 ylabel('Energy (dB re 1 \muPa^2-s)')
-set(gca,'xtick',19:30,'xticklabel','')
+set(gca,'xtick',time_start:time_gap:time_end,'xticklabel','')
 title('Total energy')
 set(gca,'layer','top')
 
 sub4 = axes;
 set(sub4,'position',[.13 .16 .8 .22])
-area(time(idx_sunset:idx_sunrise),ones(1,idx_sunrise-idx_sunset+1)*-5,30,...
-     'facecolor',ones(1,3)*240/255,'edgecolor','none')
-hold on
+if run_num==87 || run_num==131
+    area(time(idx_sunset:idx_sunrise),ones(1,idx_sunrise-idx_sunset+1)*-5,30,...
+         'facecolor',ones(1,3)*240/255,'edgecolor','none')
+    hold on
+end
 hsi1 = plot(ping_time,si_W1,'linewidth',0.5,'color',corder(1,:));
+hold on
 hsi2 = plot(ping_time,si_W2,'linewidth',0.5,'color',corder(2,:));
 if exist('sel_ping')
     for iS=1:length(sel_ping)
@@ -183,9 +215,15 @@ end
 % hv2 = plot(time(idx_sunrise)*[1 1],[0 10],'color',[1 1 1]*170/255,'linewidth',1);
 xlabel('Hour of day')
 ylabel('SI');
-set(gca,'xtick',19:30,'xticklabel',{num2str([19:23,0:7]')},...
-        'ytick',0:5:20)
-axis([19 30 0 20])
+if run_num==87 || run_num==131
+    set(gca,'xtick',time_start:time_gap:time_end,...
+        'xticklabel',{num2str([19:23,0:7]')},...
+            'ytick',0:5:20)
+else
+    set(gca,'xtick',time_start:time_gap:time_end,...
+            'ytick',0:5:20)
+end
+axis([time_start time_end 0 20])
 title('Scintillation index')
 grid
 set(gca,'layer','top')
@@ -194,6 +232,10 @@ subx = axes;
 set(subx,'Position',[.13 .09 .8 1e-12]);
 if run_num==131
     set(subx,'xlim',[0 440],'xtick',0:40:440)
+elseif run_num==129
+    set(subx,'xlim',[0 105],'xtick',0:20:105)
+elseif run_num==130
+    set(subx,'xlim',[0 85],'xtick',0:20:85)
 elseif run_num==87
     set(subx,'xlim',[80 980],'xtick',80:100:1000)
 end
@@ -209,17 +251,23 @@ fig_cmp = figure('position',[675 110 600 880]);
 corder = get(gca,'colororder');
 
 set(gca,'position',[.13 .94 .8 .02]);
-area(ping_num(1:idx_sunset_ping),ones(1,idx_sunset_ping),...
-     'facecolor','white','edgecolor','none')
-hold on
-area(ping_num(idx_sunset_ping:idx_sunrise_ping),...
-     ones(1,idx_sunrise_ping-idx_sunset_ping+1),...
-     'facecolor','k','edgecolor','none')
-area(ping_num(idx_sunrise_ping:end),...
-     ones(1,length(ping_num)-idx_sunrise_ping+1),...
-     'facecolor','white','edgecolor','none')
+if run_num==87 || run_num==131
+    area(ping_num(1:idx_sunset_ping),ones(1,idx_sunset_ping),...
+         'facecolor','white','edgecolor','none')
+    hold on
+    area(ping_num(idx_sunset_ping:idx_sunrise_ping),...
+         ones(1,idx_sunrise_ping-idx_sunset_ping+1),...
+         'facecolor','k','edgecolor','none')
+    area(ping_num(idx_sunrise_ping:end),...
+         ones(1,length(ping_num)-idx_sunrise_ping+1),...
+         'facecolor','white','edgecolor','none')
+end
 if run_num==131
     set(gca,'ytick',[],'xlim',[0 440],'xtick',0:40:440,'xticklabel','')
+elseif run_num==129
+    set(gca,'ytick',[],'xlim',[0 105],'xtick',0:20:105)
+elseif run_num==130
+    set(gca,'ytick',[],'xlim',[0 85],'xtick',0:20:85)
 elseif run_num==87
     set(gca,'ytick',[],'xlim',[80 980],'xtick',80:100:980,'xticklabel','')
 end
@@ -228,12 +276,17 @@ set(gca,'layer','top')
 
 sub2 = axes;
 set(sub2,'position',[.13 .68 .8 .22])
-area(ping_num(idx_sunset_ping:idx_sunrise_ping),...
-     ones(1,idx_sunrise_ping-idx_sunset_ping+1)*115,75,...
-     'facecolor',ones(1,3)*240/255,'edgecolor','none')
+if run_num==87 || run_num==131
+    area(ping_num(idx_sunset_ping:idx_sunrise_ping),...
+         ones(1,idx_sunrise_ping-idx_sunset_ping+1)*115,75,...
+         'facecolor',ones(1,3)*240/255,'edgecolor','none')
+    hold on
+end
+hw1 = plot(ping_num,max_W1_cal,'color',corder(1,:),...
+           'linewidth',0.5,'linestyle','-');
 hold on
-hw1 = plot(ping_num,max_W1_cal,'color',corder(1,:),'linewidth',0.5,'linestyle','-');
-hw2 = plot(ping_num,max_W2_cal,'color',corder(2,:),'linewidth',0.5);
+hw2 = plot(ping_num,max_W2_cal,'color',corder(2,:),...
+           'linewidth',0.5);
 % hv1 = plot(time(idx_sunset)*[1 1],[75 115],'color',[1 1 1]*170/255,'linewidth',1);
 % hv2 = plot(time(idx_sunrise)*[1 1],[75 115],'color',[1 1 1]*170/255,'linewidth',1);
 if exist('sel_ping')
@@ -245,6 +298,12 @@ end
 if run_num==131
     axis([0 440 75 115])
     set(gca,'xtick',0:40:440,'xticklabel','')
+elseif run_num==129
+    axis([0 105 75 115])
+    set(gca,'xtick',0:20:85,'xticklabel','')
+elseif run_num==130
+    axis([0 85 75 115])
+    set(gca,'xtick',0:20:85,'xticklabel','')
 elseif run_num==87
     axis([80 980 75 115])
     set(gca,'xtick',80:100:980,'xticklabel','')
@@ -258,10 +317,12 @@ set(gca,'layer','top')
 
 sub3 = axes;
 set(sub3,'position',[.13 .42 .8 .22])
-area(ping_num(idx_sunset_ping:idx_sunrise_ping),...
-     ones(1,idx_sunrise_ping-idx_sunset_ping+1)*19,28,...
-     'facecolor',ones(1,3)*240/255,'edgecolor','none')
-hold on
+if run_num==87 || run_num==131
+    area(ping_num(idx_sunset_ping:idx_sunrise_ping),...
+         ones(1,idx_sunrise_ping-idx_sunset_ping+1)*19,28,...
+         'facecolor',ones(1,3)*240/255,'edgecolor','none')
+    hold on
+end
 he = plot(ping_num,E_cal,'linewidth',0.5,'color','k');
 % hv1 = plot(time(idx_sunset)*[1 1],[19 27],'color',[1 1 1]*170/255,'linewidth',1);
 % hv2 = plot(time(idx_sunrise)*[1 1],[19 27],'color',[1 1 1]*170/255,'linewidth',1);
@@ -278,6 +339,12 @@ if run_num==131
         axis([0 440 76 91])
     end
     set(gca,'xtick',0:40:440,'xticklabel','')
+elseif run_num==129
+    axis([0 105 76 91])
+    set(gca,'xtick',0:20:105,'xticklabel','')
+elseif run_num==130
+    axis([0 85 76 91])
+    set(gca,'xtick',0:20:85,'xticklabel','')
 elseif run_num==87
     axis([80 980 76 91])
     set(gca,'xtick',80:100:980,'xticklabel','')
@@ -289,11 +356,14 @@ set(gca,'layer','top')
 
 sub4 = axes;
 set(sub4,'position',[.13 .16 .8 .22])
-area(ping_num(idx_sunset_ping:idx_sunrise_ping),...
-     ones(1,idx_sunrise_ping-idx_sunset_ping+1)*-5,30,...
-     'facecolor',ones(1,3)*240/255,'edgecolor','none')
-hold on
+if run_num==87 || run_num==131
+    area(ping_num(idx_sunset_ping:idx_sunrise_ping),...
+         ones(1,idx_sunrise_ping-idx_sunset_ping+1)*-5,30,...
+         'facecolor',ones(1,3)*240/255,'edgecolor','none')
+    hold on
+end
 hsi1 = plot(ping_num,si_W1,'linewidth',0.5,'color',corder(1,:));
+hold on
 hsi2 = plot(ping_num,si_W2,'linewidth',0.5,'color',corder(2,:));
 if exist('sel_ping')
     for iS=1:length(sel_ping)
@@ -306,6 +376,12 @@ ylabel('SI');
 if run_num==131
     set(gca,'xtick',0:40:440)
     axis([0 440 0 20])
+elseif run_num==129
+    set(gca,'xtick',0:20:105)
+    axis([0 85 0 20])
+elseif run_num==130
+    set(gca,'xtick',0:20:85)
+    axis([0 85 0 20])
 else
     set(gca,'xtick',80:100:980)
     axis([80 980 0 20])
@@ -316,7 +392,13 @@ set(gca,'layer','top')
 
 subx = axes;
 set(subx,'Position',[.13 .09 .8 1e-12]);
-set(subx,'xlim',[0 11],'xtick',0:11,'xticklabel',[19:23,0:6])
+if run_num==131 || run_num==87
+    set(subx,'xlim',[0 11],'xtick',0:11,'xticklabel',[19:23,0:6])
+elseif run_num==129
+    set(subx,'xlim',[0 2],'xtick',0:0.5:2,'xticklabel',[time_start:0.5:time_end])
+elseif run_num==130
+    set(subx,'xlim',[0 2],'xtick',0:0.5:2,'xticklabel',[time_end:0.5:time_end])
+end
 xlabel('Hour of day')
 
 saveas(gcf,fullfile(save_path,...
