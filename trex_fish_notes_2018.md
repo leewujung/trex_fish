@@ -125,6 +125,16 @@
 - updated figure file in ms, old fig_energy_si_sun files from March 2018 were saved under `fig_energy_si_sun_201803` in `/trex_fish/figs_results` folder and under ms fig folder `matlab_figs_20180401`.
 
 
+************************************************
+## 2018/05/14
+### Process run 129 and 130
+- Need to process these two runs to figure out why there was high Emax and SI in AW1 before dusk. Was this a pattern from earlier during the day?
+- May have to process data from other days before the overnight session to figure this out.
+- Run 129 and 130 used the same 2 waveforms as run 131, which is the expt session we focus analysis on for the ms.
+  - Run 130: 170 pings
+  - Run 129: 210 pings
+  
+  
 
 
 
