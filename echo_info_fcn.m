@@ -8,6 +8,8 @@
 %             use SL to calibrate the spectrum
 %             save info extracted for each ping
 % 2017 01 25  Clean up code to work with new beamforming results
+% 2018 05 15  Add exceptions for missing SL data (run 130 before
+%             ping 95 is not usable)
 
 
 function echo_info_fcn(data_path,ping_num,base_save_path,base_data_path,plot_show_opt)
@@ -139,14 +141,19 @@ for iP=1:ping_len
     % Get SL for spectral calibration
     SL = get_SL(run_num,ping_num_curr);
 
-    % Get raw echo spectrum (without any compensation)
-    no_spec = get_spectrum_mtm(no,A.data.sample_freq,win_perc);
-    wr_spec = get_spectrum_mtm(wr,A.data.sample_freq,win_perc);
+    if ~isempty(SL)
+        % Get raw echo spectrum (without any compensation)
+        no_spec = get_spectrum_mtm(no,A.data.sample_freq,win_perc);
+        wr_spec = get_spectrum_mtm(wr,A.data.sample_freq,win_perc);
 
-    % Compensation for all factors 
-    no_spec = compensate_echo_spectrum(no_spec,SL,A);
-    wr_spec = compensate_echo_spectrum(wr_spec,SL,A);
-
+        % Compensation for all factors 
+        no_spec = compensate_echo_spectrum(no_spec,SL,A);
+        wr_spec = compensate_echo_spectrum(wr_spec,SL,A);
+    else
+        no_spec = [];
+        wr_spec = [];
+    end
+    
     % Get echo stat
     no_env = mf_env.env(no_r_idx(1):no_r_idx(2),no_a_idx(1):no_a_idx(2));
     wr_env = mf_env.env(wr_r_idx(1):wr_r_idx(2),wr_a_idx(1):wr_a_idx(2));
@@ -217,24 +224,26 @@ for iP=1:ping_len
     set(gca,'fontsize',12,'xtick',[1e4,1e6,1e8])
     hold off
     grid
-    
-    subplot(133)  % spectrum
-    cla
-    plot(no_spec.freq_vec/1e3,no_spec.pxx_dB_mean_comp,...
-        'color',corder(1,:),'linewidth',2);
-    hold on
-    plot(wr_spec.freq_vec/1e3,wr_spec.pxx_dB_mean_comp,...
-        'linewidth',2,'color',[153,204,255]/255);
-    ll = legend('no wreck','wreck');
-    set(ll,'fontsize',11,'location','southoutside')
-    ylim([-140 -100])
-    xlim([1.6 3.8])
-    xlabel('Frequency (kHz)','fontsize',14)
-    ylabel('Spectral density (dB/Hz)','fontsize',14)
-    set(gca,'fontsize',12,'xtick',1.6:0.4:3.8,'ytick',-140:10:-100)
-    grid on
-    box on
 
+    if ~isempty(SL)
+        subplot(133)  % spectrum
+        cla
+        plot(no_spec.freq_vec/1e3,no_spec.pxx_dB_mean_comp,...
+             'color',corder(1,:),'linewidth',2);
+        hold on
+        plot(wr_spec.freq_vec/1e3,wr_spec.pxx_dB_mean_comp,...
+             'linewidth',2,'color',[153,204,255]/255);
+        ll = legend('no wreck','wreck');
+        set(ll,'fontsize',11,'location','southoutside')
+        ylim([-140 -100])
+        xlim([1.6 3.8])
+        xlabel('Frequency (kHz)','fontsize',14)
+        ylabel('Spectral density (dB/Hz)','fontsize',14)
+        set(gca,'fontsize',12,'xtick',1.6:0.4:3.8,'ytick',-140:10:-100)
+        grid on
+        box on
+    end
+    
     mtit(title_text,'fontsize',16);
     
     saveSameSize_150(gcf,'file',fullfile(save_path,[save_fname,'.png']),...

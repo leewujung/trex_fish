@@ -5,6 +5,8 @@ function S = get_SL(run_num,ping_num)
 % 2016 11 21
 % 2017 01 23  Clean up
 % 2017 02 19  Enable loading each individual MON file for each ping
+% 2018 05 15  Add files for run 129 & 130
+%             Note exception for run 130 --don't process ping_num<95
 
 % Load transmit waveform
 if isunix
@@ -28,10 +30,27 @@ switch run_num
     amp_mon_subpath = 'TREX13_MON_13-05-14_21-27-37-260';
   case 124
     amp_mon_subpath = 'TREX13_MON_13-05-15_21-11-39-716';
+  case 129
+    amp_mon_subpath = 'TREX13_MON_13-05-16_14-59-11-817';
+  case 130
+    amp_mon_subpath = 'TREX13_MON_13-05-16_16-52-54-133';
   case 131
     amp_mon_subpath = 'TREX13_MON_13-05-16_18-28-07-368';
 end
-amp_mon_file = sprintf('TREX13_MON_I%05d_P%05d.mat',run_num,ping_num);
+if run_num==130
+    if ping_num < 95
+        S = [];
+        return
+    else
+        ping_num = ping_num-94;
+    end
+    amp_mon_file = sprintf('TREX13_MON_I%05d-restart_P%05d.mat',run_num,ping_num);
+elseif run_num==129
+    S = [];
+    return    
+else
+    amp_mon_file = sprintf('TREX13_MON_I%05d_P%05d.mat',run_num,ping_num);
+end
 
 A = load(fullfile(amp_mon_path,amp_mon_subpath,amp_mon_file));
 

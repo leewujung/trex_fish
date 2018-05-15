@@ -126,14 +126,16 @@
 
 
 ************************************************
-## 2018/05/14
+## 2018/05/14-15
 ### Process run 129 and 130
 - Need to process these two runs to figure out why there was high Emax and SI in AW1 before dusk. Was this a pattern from earlier during the day?
 - May have to process data from other days before the overnight session to figure this out.
 - Run 129 and 130 used the same 2 waveforms as run 131, which is the expt session we focus analysis on for the ms.
   - Run 130: 170 pings
   - Run 129: 210 pings
-  
+- Added `subset_beamform_runner` and updated `get_SL`, `echo_info_fcn`, `echo_info_fcn_runner` for processing these 2 runs.
+- Run 130 was stopped and restarted so there were some confusion of file numbers. Jie noted that there were 96 good files in run 130. This number is consistent with the number of files in the run 131 HAARI folder. But I decided to only use the last 76 files (ping 95-170) since I can be certain that these are the files that did not have problem after the system was restarted.
+- Run 129 HAARI folder is missing ping 131... added exceptions to `get_SL`.
   
 
 
