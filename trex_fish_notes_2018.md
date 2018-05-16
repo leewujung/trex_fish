@@ -135,8 +135,8 @@
   - Run 129: 210 pings
 - Added `subset_beamform_runner` and updated `get_SL`, `echo_info_fcn`, `echo_info_fcn_runner` for processing these 2 runs.
 - Run 130 was stopped and restarted so there were some confusion of file numbers. Jie noted that there were 96 good files in run 130. This number is consistent with the number of files in the run 131 HAARI folder. But I decided to only use the last 76 files (ping 95-170) since I can be certain that these are the files that did not have problem after the system was restarted.
-- Run 129 HAARI folder is missing ping 131... added exceptions to `get_SL`.
-  
+- LF waveform
+![](./notes_img/fig_energy_si_sun_multiple_sessions_run129-130-131_wfm1_time.png)
 
-
-
+- HF waveform
+![](./notes_img/fig_energy_si_sun_multiple_sessions_run129-130-131_wfm2_time.png)

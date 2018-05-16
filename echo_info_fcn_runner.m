@@ -4,7 +4,7 @@
 %             shown in the beginning of Run 131
 
 %run_num_all = [131,79,87,94,103,115,120,124];
-run_num_all = [130,129];
+run_num_all = [130];
 
 base_data_path = '~/internal_2tb/trex/figs_results/';
 base_save_path = '~/internal_2tb/trex/figs_results/';
@@ -61,7 +61,7 @@ for iR=1:length(run_num_all)
             data_path = 'subset_beamform_cardioid_coherent_run129';
           case 130
             ping_num1 = 1:2:170;    % run 130
-            ping_num2 = 1:2:170;    % run 130
+            ping_num2 = 2:2:170;    % run 130
             wfm1 = 1;
             wfm2 = 2;
             data_path = 'subset_beamform_cardioid_coherent_run130';

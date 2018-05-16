@@ -11,10 +11,10 @@ base_data_path = '~/internal_2tb/trex/figs_results/';
 
 % Set up params for multiple sessions
 run_num_all = [129,130,131];
-wfm = 1;
-ping_num_all{1} = 1:2:210;  % run 129
-ping_num_all{2} = 1:2:170;  % run 130
-ping_num_all{3} = 1:2:1000;  % run 131
+wfm = 2;
+ping_num_all{1} = wfm:2:210;  % run 129
+ping_num_all{2} = wfm:2:170;  % run 130
+ping_num_all{3} = wfm:2:1000;  % run 131
 
 sunset = 20+28/60;    % nautical twilight end
 sunrise = 4+49/60+24; % nautical twilight start
