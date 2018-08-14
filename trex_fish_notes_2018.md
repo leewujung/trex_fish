@@ -140,3 +140,23 @@
 
 - HF waveform
 ![](./notes_img/fig_energy_si_sun_multiple_sessions_run129-130-131_wfm2_time.png)
+
+
+************************************************
+## 2018/08/01
+### Checking fish resonance for responding reviewer's comments
+- Refs:
+	- Stanton et al. 2012 points to Diachok 2005 review for the differences between physoclits and physostomes, as well as Nero et al. 2004 paper for the V=AL^3.35 formulation between swimbladder volume (V) and fish length (L).
+
+
+************************************************
+## 2018/08/14
+### Finalize revision and submit
+- `trex_fish_ms_v11.0_revision` has all track changes.
+- `trex_fish_ms_v11.1_revision`
+	- all changes accepted
+	- Stanton et al. submitted --> Stanton et al. 2018
+	- removed all doi from reference list
+	- updated Jie's paper with issue and page info (before was "early online")
+- Note there is an additional line in Fig. 2 caption compared to the submitted version.
+- The reviewer pdf is prepared using `trex_fish_ms_v11.1_revision`.
